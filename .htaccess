@@ -1,12 +1,13 @@
 DirectoryIndex index.html index.cgi index.php
 
-#set php_value
-
 <IfModule mod_rewrite.c>
 	RewriteEngine On
-#	RewriteBase /
 	RewriteBase /
 
+# BEGIN APPS
+	RewriteRule ^mhs/bio/(.*)$ index.php?/aka_mahasiswa/mhs/biodata/$1 [L,QSA]
+	RewriteRule ^peg/bio/(.*)$ index.php?/peg_pegawai/pegawai/biodata/$1 [L,QSA]
+# END APPS
 	RewriteRule ^(login/?)$ index.php?/users/user/login [L,QSA]
 	RewriteCond %{REQUEST_FILENAME} !-f
 	RewriteCond %{REQUEST_FILENAME} !-d
