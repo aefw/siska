@@ -7,12 +7,12 @@ use BarcodeBakery\Common\BCGFontFile;
 use BarcodeBakery\Common\BCGLabel;
 
 define('IN_CB', true);
-include_once('include/function.php');
+include_once(__DIR__ . DIRECTORY_SEPARATOR . 'include/function.php');
 
 function showError()
 {
     header('Content-Type: image/png');
-    readfile('error.png');
+    readfile(__DIR__ . DIRECTORY_SEPARATOR . 'error.png');
     exit;
 }
 
@@ -32,13 +32,13 @@ if (!preg_match('/^[A-Za-z0-9]+$/', $_GET['code'])) {
 $code = $_GET['code'];
 
 // Check if the code is valid
-if (!file_exists('config' . DIRECTORY_SEPARATOR . $code . '.php')) {
+if (!file_exists(__DIR__ . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . $code . '.php')) {
     showError();
 }
 
-include_once('config' . DIRECTORY_SEPARATOR . $code . '.php');
+include_once(__DIR__ . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . $code . '.php');
 
-include_once('config' . DIRECTORY_SEPARATOR . $baseClassFile);
+include_once(__DIR__ . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . $baseClassFile);
 
 $filetypes = array('PNG' => BCGDrawing::IMG_FORMAT_PNG, 'JPEG' => BCGDrawing::IMG_FORMAT_JPEG, 'GIF' => BCGDrawing::IMG_FORMAT_GIF);
 $finalClassName = 'BarcodeBakery\\Barcode\\' . $className;
