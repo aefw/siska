@@ -434,8 +434,8 @@ class JWT
         list($r, $s) = \str_split($sig, (int) (\strlen($sig) / 2));
 
         // Trim leading zeros
-        $r = \ltrim($r, "\x00");
-        $s = \ltrim($s, "\x00");
+        $r = \ltrim((string) $r, "\x00");
+        $s = \ltrim((string) $s, "\x00");
 
         // Convert r-value and s-value from unsigned big-endian integers to
         // signed two's complement
@@ -492,8 +492,8 @@ class JWT
 
         // Convert r-value and s-value from signed two's compliment to unsigned
         // big-endian integers
-        $r = \ltrim($r, "\x00");
-        $s = \ltrim($s, "\x00");
+        $r = \ltrim((string) $r, "\x00");
+        $s = \ltrim((string) $s, "\x00");
 
         // Pad out r and s so that they are $keySize bits long
         $r = \str_pad($r, $keySize / 8, "\x00", STR_PAD_LEFT);

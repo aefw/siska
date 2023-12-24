@@ -59,7 +59,7 @@ abstract class HTMLPurifier_AttrDef
      */
     public function parseCDATA($string)
     {
-        $string = trim($string);
+        $string = trim((string) $string);
         $string = str_replace(array("\n", "\t", "\r"), ' ', $string);
         return $string;
     }
@@ -126,7 +126,7 @@ abstract class HTMLPurifier_AttrDef
                         continue;
                     }
                     $ret .= $char;
-                    if ($i < $c && trim($string[$i]) !== '') {
+                    if ($i < $c && trim((string) $string[$i]) !== '') {
                         $i--;
                     }
                     continue;

@@ -164,7 +164,7 @@ class HTMLPurifier_AttrDef_CSS_Font extends HTMLPurifier_AttrDef
                     if ($r !== false) {
                         $final .= $r . ' ';
                         // processing completed successfully
-                        return rtrim($final);
+                        return rtrim((string) $final);
                     }
                     return false;
             }

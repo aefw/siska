@@ -285,8 +285,8 @@ class Functions
         preg_match('/(=|<[>=]?|>=?)(.*)/', $condition, $matches);
         [, $operator, $operand] = $matches;
 
-        if (is_numeric(trim($operand, '"'))) {
-            $operand = trim($operand, '"');
+        if (is_numeric(trim((string) $operand, '"'))) {
+            $operand = trim((string) $operand, '"');
         } elseif (!is_numeric($operand)) {
             $operand = str_replace('"', '""', $operand);
             $operand = Calculation::wrapResult(strtoupper($operand));
@@ -669,7 +669,7 @@ class Functions
         preg_match('/^' . Calculation::CALCULATION_REGEXP_CELLREF . '$/i', $cellReference, $matches);
 
         $cellReference = $matches[6] . $matches[7];
-        $worksheetName = trim($matches[3], "'");
+        $worksheetName = trim((string) $matches[3], "'");
 
         $worksheet = (!empty($worksheetName))
             ? $pCell->getWorksheet()->getParent()->getSheetByName($worksheetName)

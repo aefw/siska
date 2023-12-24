@@ -107,7 +107,7 @@ class FacebookUrlDetectionHandler implements UrlDetectionInterface
 
         // trim and remove port number from host
         // host is lowercase as per RFC 952/2181
-        $host = strtolower(preg_replace('/:\d+$/', '', trim($host)));
+        $host = strtolower(preg_replace('/:\d+$/', '', trim((string) $host)));
 
         // Port number
         $scheme = $this->getHttpScheme();

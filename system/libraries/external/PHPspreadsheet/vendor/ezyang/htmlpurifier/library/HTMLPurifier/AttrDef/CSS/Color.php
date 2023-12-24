@@ -29,7 +29,7 @@ class HTMLPurifier_AttrDef_CSS_Color extends HTMLPurifier_AttrDef
             $colors = $config->get('Core.ColorKeywords');
         }
 
-        $color = trim($color);
+        $color = trim((string) $color);
         if ($color === '') {
             return false;
         }
@@ -88,7 +88,7 @@ class HTMLPurifier_AttrDef_CSS_Color extends HTMLPurifier_AttrDef
 
             foreach ($parts as $part) {
                 $i++;
-                $part = trim($part);
+                $part = trim((string) $part);
 
                 if ($part === '') {
                     return false;
@@ -130,7 +130,7 @@ class HTMLPurifier_AttrDef_CSS_Color extends HTMLPurifier_AttrDef
                     // Return value between range 0 -> $max_value
                     $new_parts[] = (int)max(min($part, $max_value), 0);
                 } elseif ($current_type == 'percentage') {
-                    $new_parts[] = (float)max(min(rtrim($part, '%'), $max_value), 0) . '%';
+                    $new_parts[] = (float)max(min(rtrim((string) $part, '%'), $max_value), 0) . '%';
                 }
             }
 

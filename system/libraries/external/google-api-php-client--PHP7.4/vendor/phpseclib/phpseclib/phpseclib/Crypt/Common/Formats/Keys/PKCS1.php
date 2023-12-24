@@ -148,7 +148,7 @@ abstract class PKCS1 extends PKCS
 
            * OpenSSL is the de facto standard.  It's utilized by OpenSSH and other projects */
         if (preg_match('#DEK-Info: (.+),(.+)#', $key, $matches)) {
-            $iv = Hex::decode(trim($matches[2]));
+            $iv = Hex::decode(trim((string) $matches[2]));
             // remove the Proc-Type / DEK-Info sections as they're no longer needed
             $key = preg_replace('#^(?:Proc-Type|DEK-Info): .*#m', '', $key);
             $ciphertext = ASN1::extractBER($key);

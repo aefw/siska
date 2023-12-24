@@ -446,10 +446,10 @@ class phpthumb_functions {
 			$disable_functions_local  = explode(',',     strtolower(@ini_get('disable_functions')));
 			$disable_functions_global = explode(',', strtolower(@get_cfg_var('disable_functions')));
 			foreach ($disable_functions_local as $key => $value) {
-				$DisabledFunctions[trim($value)] = 'local';
+				$DisabledFunctions[trim((string) $value)] = 'local';
 			}
 			foreach ($disable_functions_global as $key => $value) {
-				$DisabledFunctions[trim($value)] = 'global';
+				$DisabledFunctions[trim((string) $value)] = 'global';
 			}
 			if (@ini_get('safe_mode')) {
 				$DisabledFunctions['shell_exec']     = 'local';
@@ -672,10 +672,10 @@ class phpthumb_functions {
 				} else {
 					$data_body .= $line;
 				}
-				if (preg_match('#^HTTP/[\\.\d]+ ([\d]+)\s*(.+)?$#i', rtrim($line), $matches)) {
+				if (preg_match('#^HTTP/[\\.\d]+ ([\d]+)\s*(.+)?$#i', rtrim((string) $line), $matches)) {
 					list( , $errno, $errstr) = $matches;
 					$errno = (int) $errno;
-				} elseif (preg_match('#^Location: (.*)$#i', rtrim($line), $matches)) {
+				} elseif (preg_match('#^Location: (.*)$#i', rtrim((string) $line), $matches)) {
 					$header_newlocation = $matches[1];
 				}
 				if ($isHeader && ($line == "\r\n")) {
@@ -765,7 +765,7 @@ class phpthumb_functions {
 		$rawData = '';
 
 		$parsed_url = self::ParseURLbetter($url);
-		$alreadyLookedAtURLs[trim($url)] = true;
+		$alreadyLookedAtURLs[trim((string) $url)] = true;
 
 		while (true) {
 			$tryagain = false;
@@ -950,7 +950,7 @@ class phpthumb_functions {
 	public static function SanitizeFilename($filename) {
 		$filename = preg_replace('/[^'.preg_quote(' !#$%^()+,-.;<>=@[]_{}').'a-zA-Z0-9]/', '_', $filename);
 		if (self::version_compare_replacement(PHP_VERSION, '4.1.0', '>=')) {
-			$filename = trim($filename, '.');
+			$filename = trim((string) $filename, '.');
 		}
 		return $filename;
 	}

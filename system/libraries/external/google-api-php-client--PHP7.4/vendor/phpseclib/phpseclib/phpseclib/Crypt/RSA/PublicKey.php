@@ -168,7 +168,7 @@ class PublicKey extends RSA implements Common\PublicKey
             return false;
         }
 
-        $em = ltrim($em, "\xFF");
+        $em = ltrim((string) $em, "\xFF");
         if (Strings::shift($em) != "\0") {
             return false;
         }

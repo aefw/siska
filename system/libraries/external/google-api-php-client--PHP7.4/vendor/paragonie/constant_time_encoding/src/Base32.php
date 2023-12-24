@@ -221,7 +221,7 @@ abstract class Base32 implements EncoderInterface
                 );
             }
         } else {
-            $src = \rtrim($src, '=');
+            $src = \rtrim((string) $src, '=');
             $srcLen = Binary::safeStrlen($src);
         }
 

@@ -225,7 +225,7 @@ class HTMLPurifier_Injector_AutoParagraph extends HTMLPurifier_Injector
         }
         for ($i = 0; $i < $c; $i++) {
             $par = $raw_paragraphs[$i];
-            if (trim($par) !== '') {
+            if (trim((string) $par) !== '') {
                 $paragraphs[] = $par;
             } else {
                 if ($i == 0) {

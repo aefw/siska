@@ -16,7 +16,7 @@ class PercentageFormatter extends BaseFormatter
         $format = self::stripQuotes($format);
 
         [, $vDecimals] = explode('.', ((string) $value) . '.');
-        $vDecimalCount = strlen(rtrim($vDecimals, '0'));
+        $vDecimalCount = strlen(rtrim((string) $vDecimals, '0'));
 
         $format = str_replace('%', '%%', $format);
         $wholePartSize = strlen((string) floor($value));
@@ -24,7 +24,7 @@ class PercentageFormatter extends BaseFormatter
         // Number of decimals
         if (preg_match('/\.([?0]+)/u', $format, $matches)) {
             $decimalPartSize = strlen($matches[1]);
-            $vMinDecimalCount = strlen(rtrim($matches[1], '?'));
+            $vMinDecimalCount = strlen(rtrim((string) $matches[1], '?'));
             $decimalPartSize = min(max($vMinDecimalCount, $vDecimalCount), $decimalPartSize);
             $placeHolders = str_repeat(' ', strlen($matches[1]) - $decimalPartSize);
         }

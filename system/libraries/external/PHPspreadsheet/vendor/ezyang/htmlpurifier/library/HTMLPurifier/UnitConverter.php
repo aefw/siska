@@ -177,9 +177,9 @@ class HTMLPurifier_UnitConverter
 
         $n = $this->round($n, $sigfigs);
         if (strpos($n, '.') !== false) {
-            $n = rtrim($n, '0');
+            $n = rtrim((string) $n, '0');
         }
-        $n = rtrim($n, '.');
+        $n = rtrim((string) $n, '.');
 
         return new HTMLPurifier_Length($n, $unit);
     }
@@ -191,12 +191,12 @@ class HTMLPurifier_UnitConverter
      */
     public function getSigFigs($n)
     {
-        $n = ltrim($n, '0+-');
+        $n = ltrim((string) $n, '0+-');
         $dp = strpos($n, '.'); // decimal position
         if ($dp === false) {
-            $sigfigs = strlen(rtrim($n, '0'));
+            $sigfigs = strlen(rtrim((string) $n, '0'));
         } else {
-            $sigfigs = strlen(ltrim($n, '0.')); // eliminate extra decimal character
+            $sigfigs = strlen(ltrim((string) $n, '0.')); // eliminate extra decimal character
             if ($dp !== 0) {
                 $sigfigs--;
             }

@@ -156,14 +156,14 @@ class HTMLPurifier_Strategy_RemoveForeignElements extends HTMLPurifier_Strategy
                             $trailing_hyphen = true;
                         }
                     }
-                    $token->data = rtrim($token->data, '-');
+                    $token->data = rtrim((string) $token->data, '-');
                     $found_double_hyphen = false;
                     while (strpos($token->data, '--') !== false) {
                         $found_double_hyphen = true;
                         $token->data = str_replace('--', '-', $token->data);
                     }
-                    if ($trusted || !empty($comment_lookup[trim($token->data)]) ||
-                        ($comment_regexp !== null && preg_match($comment_regexp, trim($token->data)))) {
+                    if ($trusted || !empty($comment_lookup[trim((string) $token->data)]) ||
+                        ($comment_regexp !== null && preg_match($comment_regexp, trim((string) $token->data)))) {
                         // OK good
                         if ($e) {
                             if ($trailing_hyphen) {

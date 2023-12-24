@@ -261,7 +261,7 @@ class SlackRecord
         $this->userIcon = $userIcon;
 
         if (\is_string($userIcon)) {
-            $this->userIcon = trim($userIcon, ':');
+            $this->userIcon = trim((string) $userIcon, ':');
         }
 
         return $this;

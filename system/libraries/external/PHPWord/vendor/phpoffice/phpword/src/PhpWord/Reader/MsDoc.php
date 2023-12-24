@@ -2272,7 +2272,7 @@ class MsDoc extends AbstractReader implements ReaderInterface
                             }
                             if (empty($sHYPERLINK)) {
                                 if (ord($sText[0]) > 20) {
-                                    if (strpos(trim($sText), 'HYPERLINK "') === 0) {
+                                    if (strpos(trim((string) $sText), 'HYPERLINK "') === 0) {
                                         $sHYPERLINK = $sText;
                                     } else {
                                         $oSection->addText($sText, $styleFont);

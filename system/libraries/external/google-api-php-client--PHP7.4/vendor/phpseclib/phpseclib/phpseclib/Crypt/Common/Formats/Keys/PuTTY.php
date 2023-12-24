@@ -94,7 +94,7 @@ abstract class PuTTY
             }
             $lines = array_splice($lines, 1, -1);
             $lines = array_map(function ($line) {
-                return rtrim($line, "\r\n");
+                return rtrim((string) $line, "\r\n");
             }, $lines);
             $data = $current = '';
             $values = [];
@@ -127,7 +127,7 @@ abstract class PuTTY
 
         $components = [];
 
-        $key = preg_split('#\r\n|\r|\n#', trim($key));
+        $key = preg_split('#\r\n|\r|\n#', trim((string) $key));
         $type = trim(preg_replace('#PuTTY-User-Key-File-2: (.+)#', '$1', $key[0]));
         $components['type'] = $type;
         if (!in_array($type, static::$types)) {

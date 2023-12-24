@@ -54,8 +54,8 @@ abstract class Coordinate
         [$col, $row] = self::coordinateFromString($coordinates);
 
         return [
-            self::columnIndexFromString(ltrim($col, '$')),
-            (int) ltrim($row, '$'),
+            self::columnIndexFromString(ltrim((string) $col, '$')),
+            (int) ltrim((string) $row, '$'),
         ];
     }
 
@@ -123,8 +123,8 @@ abstract class Coordinate
 
         // Create absolute coordinate
         [$column, $row] = self::coordinateFromString($cellAddress);
-        $column = ltrim($column, '$');
-        $row = ltrim($row, '$');
+        $column = ltrim((string) $column, '$');
+        $row = ltrim((string) $row, '$');
 
         return $worksheet . '$' . $column . '$' . $row;
     }
@@ -475,7 +475,7 @@ abstract class Coordinate
             }
 
             [$column, $row] = self::coordinateFromString($coord);
-            $row = (int) (ltrim($row, '$'));
+            $row = (int) (ltrim((string) $row, '$'));
             $hashCode = $column . '-' . (is_object($value) ? $value->getHashCode() : $value);
 
             if (!isset($hashedValues[$hashCode])) {

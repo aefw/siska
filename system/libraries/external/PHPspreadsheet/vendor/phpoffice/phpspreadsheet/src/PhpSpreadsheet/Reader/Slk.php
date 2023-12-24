@@ -157,7 +157,7 @@ class Slk extends BaseReader
 
             // explode each row at semicolons while taking into account that literal semicolon (;)
             // is escaped like this (;;)
-            $rowData = explode("\t", str_replace('¤', ';', str_replace(';', "\t", str_replace(';;', '¤', rtrim($rowData)))));
+            $rowData = explode("\t", str_replace('¤', ';', str_replace(';', "\t", str_replace(';;', '¤', rtrim((string) $rowData)))));
 
             $dataType = array_shift($rowData);
             if ($dataType == 'B') {
@@ -243,7 +243,7 @@ class Slk extends BaseReader
                     }
                     //    Bracketed R references are relative to the current row
                     if ($rowReference[0] == '[') {
-                        $rowReference = (int) $row + (int) trim($rowReference, '[]');
+                        $rowReference = (int) $row + (int) trim((string) $rowReference, '[]');
                     }
                     $columnReference = $cellReference[4][0];
                     //    Empty C reference is the current column
@@ -252,7 +252,7 @@ class Slk extends BaseReader
                     }
                     //    Bracketed C references are relative to the current column
                     if ($columnReference[0] == '[') {
-                        $columnReference = (int) $column + (int) trim($columnReference, '[]');
+                        $columnReference = (int) $column + (int) trim((string) $columnReference, '[]');
                     }
                     $A1CellReference = Coordinate::stringFromColumnIndex($columnReference) . $rowReference;
 
@@ -530,7 +530,7 @@ class Slk extends BaseReader
 
             // explode each row at semicolons while taking into account that literal semicolon (;)
             // is escaped like this (;;)
-            $rowData = explode("\t", str_replace('¤', ';', str_replace(';', "\t", str_replace(';;', '¤', rtrim($rowDataTxt)))));
+            $rowData = explode("\t", str_replace('¤', ';', str_replace(';', "\t", str_replace(';;', '¤', rtrim((string) $rowDataTxt)))));
 
             $dataType = array_shift($rowData);
             if ($dataType == 'P') {

@@ -88,7 +88,7 @@ class Table
      */
     public function setName(string $name): self
     {
-        $name = trim($name);
+        $name = trim((string) $name);
 
         if (!empty($name)) {
             if (strlen($name) === 1 && in_array($name, ['C', 'c', 'R', 'r'])) {

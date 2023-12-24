@@ -191,7 +191,7 @@ class BrowserConsoleHandler extends AbstractProcessingHandler
         static $labels = [];
 
         return preg_replace_callback('/macro\s*:(.*?)(?:;|$)/', function (array $m) use ($string, &$colors, &$labels) {
-            if (trim($m[1]) === 'autolabel') {
+            if (trim((string) $m[1]) === 'autolabel') {
                 // Format the string as a label with consistent auto assigned background color
                 if (!isset($labels[$string])) {
                     $labels[$string] = $colors[count($labels) % count($colors)];

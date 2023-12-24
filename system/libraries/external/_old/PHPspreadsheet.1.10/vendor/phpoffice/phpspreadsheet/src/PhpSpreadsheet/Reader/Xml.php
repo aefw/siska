@@ -376,7 +376,7 @@ class Xml extends BaseReader
                 switch ((string) $propertyAttributes) {
                     case 'string':
                         $propertyType = Properties::PROPERTY_TYPE_STRING;
-                        $propertyValue = trim($propertyValue);
+                        $propertyValue = trim((string) $propertyValue);
 
                         break;
                     case 'boolean':
@@ -396,7 +396,7 @@ class Xml extends BaseReader
                         break;
                     case 'dateTime.tz':
                         $propertyType = Properties::PROPERTY_TYPE_DATE;
-                        $propertyValue = strtotime(trim($propertyValue));
+                        $propertyValue = strtotime(trim((string) $propertyValue));
 
                         break;
                 }
@@ -574,7 +574,7 @@ class Xml extends BaseReader
                                                 }
                                                 //    Bracketed R references are relative to the current row
                                                 if ($rowReference[0] == '[') {
-                                                    $rowReference = $rowID + trim($rowReference, '[]');
+                                                    $rowReference = $rowID + trim((string) $rowReference, '[]');
                                                 }
                                                 $columnReference = $cellReference[4][0];
                                                 //    Empty C reference is the current column
@@ -583,7 +583,7 @@ class Xml extends BaseReader
                                                 }
                                                 //    Bracketed C references are relative to the current column
                                                 if ($columnReference[0] == '[') {
-                                                    $columnReference = $columnNumber + trim($columnReference, '[]');
+                                                    $columnReference = $columnNumber + trim((string) $columnReference, '[]');
                                                 }
                                                 $A1CellReference = Coordinate::stringFromColumnIndex($columnReference) . $rowReference;
                                                 $value = substr_replace($value, $A1CellReference, $cellReference[0][1], strlen($cellReference[0][0]));

@@ -95,7 +95,7 @@ class Logical
         }
 
         $args = array_filter($args, function ($value) {
-            return $value !== null || (is_string($value) && trim($value) == '');
+            return $value !== null || (is_string($value) && trim((string) $value) == '');
         });
         $argCount = count($args);
 
@@ -138,7 +138,7 @@ class Logical
         }
 
         $args = array_filter($args, function ($value) {
-            return $value !== null || (is_string($value) && trim($value) == '');
+            return $value !== null || (is_string($value) && trim((string) $value) == '');
         });
 
         $returnValue = self::countTrueValues($args);
@@ -181,7 +181,7 @@ class Logical
         }
 
         $args = array_filter($args, function ($value) {
-            return $value !== null || (is_string($value) && trim($value) == '');
+            return $value !== null || (is_string($value) && trim((string) $value) == '');
         });
 
         $returnValue = self::countTrueValues($args);

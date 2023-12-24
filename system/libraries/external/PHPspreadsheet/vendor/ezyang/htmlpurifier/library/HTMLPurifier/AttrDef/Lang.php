@@ -15,7 +15,7 @@ class HTMLPurifier_AttrDef_Lang extends HTMLPurifier_AttrDef
      */
     public function validate($string, $config, $context)
     {
-        $string = trim($string);
+        $string = trim((string) $string);
         if (!$string) {
             return false;
         }

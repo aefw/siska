@@ -443,7 +443,7 @@ class Request extends Message
             }
         }
 
-        if (null !== $name && ('' !== ($name = trim($name)))) {
+        if (null !== $name && ('' !== ($name = trim((string) $name)))) {
             $this->setArgument($name, '');
         }
 

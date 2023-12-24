@@ -129,14 +129,14 @@ class HTMLPurifier_Filter_ExtractStyleBlocks extends HTMLPurifier_Filter
             $scopes = array();
         }
         // remove comments from CSS
-        $css = trim($css);
+        $css = trim((string) $css);
         if (strncmp('<!--', $css, 4) === 0) {
             $css = substr($css, 4);
         }
         if (strlen($css) > 3 && substr($css, -3) == '-->') {
             $css = substr($css, 0, -3);
         }
-        $css = trim($css);
+        $css = trim((string) $css);
         set_error_handler('htmlpurifier_filter_extractstyleblocks_muteerrorhandler');
         $this->_tidy->parse($css);
         restore_error_handler();
@@ -147,7 +147,7 @@ class HTMLPurifier_Filter_ExtractStyleBlocks extends HTMLPurifier_Filter
             // $decls are all CSS declarations inside an @ selector
             $new_decls = array();
             foreach ($decls as $selector => $style) {
-                $selector = trim($selector);
+                $selector = trim((string) $selector);
                 if ($selector === '') {
                     continue;
                 } // should not happen

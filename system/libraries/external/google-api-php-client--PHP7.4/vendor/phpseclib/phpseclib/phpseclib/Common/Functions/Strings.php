@@ -271,7 +271,7 @@ abstract class Strings
                 $xor ^ eval('return 0b' . $part . ';')
             );
         }
-        return ltrim($str, "\0");
+        return ltrim((string) $str, "\0");
     }
 
     /**
@@ -310,7 +310,7 @@ abstract class Strings
             }
         }
 
-        return ltrim($bits, '0');
+        return ltrim((string) $bits, '0');
     }
 
     /**

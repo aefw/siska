@@ -46,8 +46,8 @@ class HTMLPurifier_AttrDef_CSS_Filter extends HTMLPurifier_AttrDef
         $lookup = array();
         foreach ($params as $param) {
             list($key, $value) = explode('=', $param);
-            $key = trim($key);
-            $value = trim($value);
+            $key = trim((string) $key);
+            $value = trim((string) $value);
             if (isset($lookup[$key])) {
                 continue;
             }

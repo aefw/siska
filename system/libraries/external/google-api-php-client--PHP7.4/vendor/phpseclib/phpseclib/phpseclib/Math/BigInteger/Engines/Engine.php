@@ -243,7 +243,7 @@ abstract class Engine implements \Serializable
         $hex = $this->toBytes($twos_compliment);
         $bits = Strings::bin2bits($hex);
 
-        $result = $this->precision > 0 ? substr($bits, -$this->precision) : ltrim($bits, '0');
+        $result = $this->precision > 0 ? substr($bits, -$this->precision) : ltrim((string) $bits, '0');
 
         if ($twos_compliment && $this->compare(new static()) > 0 && $this->precision <= 0) {
             return '0' . $result;
@@ -754,7 +754,7 @@ abstract class Engine implements \Serializable
 
         $max = $max->subtract($min->subtract(static::$one));
 
-        $size = strlen(ltrim($max->toBytes(), chr(0)));
+        $size = strlen(ltrim((string) $max->toBytes(), chr(0)));
 
         /*
             doing $random % $max doesn't work because some numbers will be more likely to occur than others.

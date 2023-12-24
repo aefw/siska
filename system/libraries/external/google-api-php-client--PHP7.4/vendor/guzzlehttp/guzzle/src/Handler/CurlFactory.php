@@ -561,7 +561,7 @@ class CurlFactory implements CurlFactoryInterface
             $easy,
             &$startingResponse
         ) {
-            $value = \trim($h);
+            $value = \trim((string) $h);
             if ($value === '') {
                 $startingResponse = true;
                 try {

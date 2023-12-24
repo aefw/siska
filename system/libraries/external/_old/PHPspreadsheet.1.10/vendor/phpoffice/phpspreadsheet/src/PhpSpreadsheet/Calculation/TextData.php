@@ -57,7 +57,7 @@ class TextData
         }
 
         if (is_string($stringValue) || is_numeric($stringValue)) {
-            return str_replace(self::$invalidChars, '', trim($stringValue, "\x00..\x1F"));
+            return str_replace(self::$invalidChars, '', trim((string) $stringValue, "\x00..\x1F"));
         }
 
         return null;
@@ -78,7 +78,7 @@ class TextData
         }
 
         if (is_string($stringValue) || is_numeric($stringValue)) {
-            return trim(preg_replace('/ +/', ' ', trim($stringValue, ' ')), ' ');
+            return trim(preg_replace('/ +/', ' ', trim((string) $stringValue, ' ')), ' ');
         }
 
         return null;
@@ -553,7 +553,7 @@ class TextData
             $numberValue = str_replace(
                 StringHelper::getThousandsSeparator(),
                 '',
-                trim($value, " \t\n\r\0\x0B" . StringHelper::getCurrencyCode())
+                trim((string) $value, " \t\n\r\0\x0B" . StringHelper::getCurrencyCode())
             );
             if (is_numeric($numberValue)) {
                 return (float) $numberValue;
@@ -615,7 +615,7 @@ class TextData
             $value = str_replace([$groupSeparator, $decimalSeparator], ['', '.'], $value);
 
             // Handle the special case of trailing % signs
-            $percentageString = rtrim($value, '%');
+            $percentageString = rtrim((string) $value, '%');
             if (!is_numeric($percentageString)) {
                 return Functions::VALUE();
             }
@@ -662,7 +662,7 @@ class TextData
         // Loop through arguments
         $aArgs = Functions::flattenArray($args);
         foreach ($aArgs as $key => &$arg) {
-            if ($ignoreEmpty && trim($arg) == '') {
+            if ($ignoreEmpty && trim((string) $arg) == '') {
                 unset($aArgs[$key]);
             } elseif (is_bool($arg)) {
                 $arg = self::convertBooleanValue($arg);

@@ -170,8 +170,8 @@ class Functions
         [, $operator, $operand] = $matches;
 
         $operand = self::operandSpecialHandling($operand);
-        if (is_numeric(trim($operand, '"'))) {
-            $operand = trim($operand, '"');
+        if (is_numeric(trim((string) $operand, '"'))) {
+            $operand = trim((string) $operand, '"');
         } elseif (!is_numeric($operand) && $operand !== 'FALSE' && $operand !== 'TRUE') {
             $operand = str_replace('"', '""', $operand);
             $operand = Calculation::wrapResult(strtoupper($operand));
@@ -190,7 +190,7 @@ class Functions
 
         // Check for percentage
         if (preg_match('/^\-?\d*\.?\d*\s?\%$/', $operand)) {
-            return ((float) rtrim($operand, '%')) / 100;
+            return ((float) rtrim((string) $operand, '%')) / 100;
         }
 
         // Check for dates

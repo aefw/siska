@@ -18,7 +18,7 @@ final class Message
     public static function toString(MessageInterface $message)
     {
         if ($message instanceof RequestInterface) {
-            $msg = trim($message->getMethod() . ' '
+            $msg = trim((string) $message->getMethod() . ' '
                     . $message->getRequestTarget())
                 . ' HTTP/' . $message->getProtocolVersion();
             if (!$message->hasHeader('host')) {
@@ -121,7 +121,7 @@ final class Message
             throw new \InvalidArgumentException('Invalid message');
         }
 
-        $message = ltrim($message, "\r\n");
+        $message = ltrim((string) $message, "\r\n");
 
         $messageParts = preg_split("/\r?\n\r?\n/", $message, 2);
 
@@ -192,7 +192,7 @@ final class Message
         $host = $headers[reset($hostKey)][0];
         $scheme = substr($host, -4) === ':443' ? 'https' : 'http';
 
-        return $scheme . '://' . $host . '/' . ltrim($path, '/');
+        return $scheme . '://' . $host . '/' . ltrim((string) $path, '/');
     }
 
     /**

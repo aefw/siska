@@ -151,7 +151,7 @@ abstract class Base64 implements EncoderInterface
                 );
             }
         } else {
-            $encodedString = \rtrim($encodedString, '=');
+            $encodedString = \rtrim((string) $encodedString, '=');
             $srcLen = Binary::safeStrlen($encodedString);
         }
 

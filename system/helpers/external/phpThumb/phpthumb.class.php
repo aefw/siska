@@ -1496,7 +1496,7 @@ class phpthumb {
 					$WhichConvert = $cachedwhichconvertstring;
 				} else {
 					$execResult = phpthumb_functions::SafeExec('which convert');
-					$WhichConvert = $execResult !== null ? trim($execResult) : null;
+					$WhichConvert = $execResult !== null ? trim((string) $execResult) : null;
 					@file_put_contents($IMwhichConvertCacheFilename, $WhichConvert);
 					@chmod($IMwhichConvertCacheFilename, $this->getParameter('config_file_create_mask'));
 				}
@@ -1603,7 +1603,7 @@ class phpthumb {
 					$this->DebugMessage('ImageMagick version checked with "'.$commandline.'"', __FILE__, __LINE__);
 					$versionstring[1] = trim(phpthumb_functions::SafeExec($commandline));
 					if (preg_match('#^Version: [^\d]*([ 0-9\\.\\:Q/\\-]+)#i', $versionstring[1], $matches)) {
-						$versionstring[0] = trim($matches[1]);
+						$versionstring[0] = trim((string) $matches[1]);
 					} else {
 						$versionstring[0] = false;
 						$this->DebugMessage('ImageMagick did not return recognized version string ('.$versionstring[1].')', __FILE__, __LINE__);
@@ -1629,7 +1629,7 @@ class phpthumb {
 				$commandline .= ' -help';
 				$IMhelp_lines = explode("\n", phpthumb_functions::SafeExec($commandline));
 				foreach ($IMhelp_lines as $line) {
-					if (preg_match('#^[\\+\\-]([a-z\\-]+) #', trim($line), $matches)) {
+					if (preg_match('#^[\\+\\-]([a-z\\-]+) #', trim((string) $line), $matches)) {
 						$IMoptions[$matches[1]] = true;
 					}
 				}

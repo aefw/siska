@@ -87,7 +87,7 @@ class LookupRef
      */
     public static function COLUMN($cellAddress = null)
     {
-        if ($cellAddress === null || trim($cellAddress) === '') {
+        if ($cellAddress === null || trim((string) $cellAddress) === '') {
             return 0;
         }
 
@@ -164,7 +164,7 @@ class LookupRef
      */
     public static function ROW($cellAddress = null)
     {
-        if ($cellAddress === null || trim($cellAddress) === '') {
+        if ($cellAddress === null || trim((string) $cellAddress) === '') {
             return 0;
         }
 
@@ -243,11 +243,11 @@ class LookupRef
         $linkURL = ($linkURL === null) ? '' : Functions::flattenSingleValue($linkURL);
         $displayName = ($displayName === null) ? '' : Functions::flattenSingleValue($displayName);
 
-        if ((!is_object($pCell)) || (trim($linkURL) == '')) {
+        if ((!is_object($pCell)) || (trim((string) $linkURL) == '')) {
             return Functions::REF();
         }
 
-        if ((is_object($displayName)) || trim($displayName) == '') {
+        if ((is_object($displayName)) || trim((string) $displayName) == '') {
             $displayName = $linkURL;
         }
 
@@ -296,7 +296,7 @@ class LookupRef
 
             if (strpos($cellAddress, '!') !== false) {
                 [$sheetName, $cellAddress] = Worksheet::extractSheetTitle($cellAddress, true);
-                $sheetName = trim($sheetName, "'");
+                $sheetName = trim((string) $sheetName, "'");
                 $pSheet = $pCell->getWorksheet()->getParent()->getSheetByName($sheetName);
             } else {
                 $pSheet = $pCell->getWorksheet();
@@ -307,7 +307,7 @@ class LookupRef
 
         if (strpos($cellAddress, '!') !== false) {
             [$sheetName, $cellAddress] = Worksheet::extractSheetTitle($cellAddress, true);
-            $sheetName = trim($sheetName, "'");
+            $sheetName = trim((string) $sheetName, "'");
             $pSheet = $pCell->getWorksheet()->getParent()->getSheetByName($sheetName);
         } else {
             $pSheet = $pCell->getWorksheet();
@@ -360,7 +360,7 @@ class LookupRef
         $sheetName = null;
         if (strpos($cellAddress, '!')) {
             [$sheetName, $cellAddress] = Worksheet::extractSheetTitle($cellAddress, true);
-            $sheetName = trim($sheetName, "'");
+            $sheetName = trim((string) $sheetName, "'");
         }
         if (strpos($cellAddress, ':')) {
             [$startCell, $endCell] = explode(':', $cellAddress);
@@ -954,7 +954,7 @@ class LookupRef
         preg_match('/^' . Calculation::CALCULATION_REGEXP_CELLREF . '$/i', $cellReference, $matches);
 
         $cellReference = $matches[6] . $matches[7];
-        $worksheetName = trim($matches[3], "'");
+        $worksheetName = trim((string) $matches[3], "'");
         $worksheet = (!empty($worksheetName))
             ? $pCell->getWorksheet()->getParent()->getSheetByName($worksheetName)
             : $pCell->getWorksheet();

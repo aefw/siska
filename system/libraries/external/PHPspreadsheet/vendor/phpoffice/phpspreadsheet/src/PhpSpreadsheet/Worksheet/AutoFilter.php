@@ -920,9 +920,9 @@ class AutoFilter
                         if (!is_array($ruleValue) && !is_numeric($ruleValue)) {
                             //    Convert to a regexp allowing for regexp reserved characters, wildcards and escaped wildcards
                             $ruleValue = WildcardMatch::wildcard($ruleValue);
-                            if (trim($ruleValue) == '') {
+                            if (trim((string) $ruleValue) == '') {
                                 $customRuleForBlanks = true;
-                                $ruleValue = trim($ruleValue);
+                                $ruleValue = trim((string) $ruleValue);
                             }
                         }
                         $ruleValues[] = ['operator' => $rule->getOperator(), 'value' => $ruleValue];

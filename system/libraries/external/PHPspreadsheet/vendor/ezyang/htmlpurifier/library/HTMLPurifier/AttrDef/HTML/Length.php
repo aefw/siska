@@ -18,7 +18,7 @@ class HTMLPurifier_AttrDef_HTML_Length extends HTMLPurifier_AttrDef_HTML_Pixels
      */
     public function validate($string, $config, $context)
     {
-        $string = trim($string);
+        $string = trim((string) $string);
         if ($string === '') {
             return false;
         }

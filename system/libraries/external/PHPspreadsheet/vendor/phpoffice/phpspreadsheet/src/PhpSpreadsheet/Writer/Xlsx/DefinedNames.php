@@ -222,7 +222,7 @@ class DefinedNames
                     $worksheet = ($ws === null) ? null : $ws->getTitle();
                 }
             } else {
-                $worksheet = str_replace("''", "'", trim($worksheet, "'"));
+                $worksheet = str_replace("''", "'", trim((string) $worksheet, "'"));
             }
 
             if (!empty($worksheet)) {

@@ -146,7 +146,7 @@ class Integer extends Base
      */
     private static function deg($x)
     {
-        $x = ltrim($x, "\0");
+        $x = ltrim((string) $x, "\0");
         $xbit = decbin(ord($x[0]));
         $xlen = $xbit == '0' ? 0 : strlen($xbit);
         $len = strlen($x);
@@ -183,7 +183,7 @@ class Integer extends Base
                  str_pad($s, $length, "\0", STR_PAD_LEFT);
         }
 
-        return [ltrim($q, "\0"), ltrim($r, "\0")];
+        return [ltrim((string) $q, "\0"), ltrim((string) $r, "\0")];
     }
 
     /**
@@ -194,7 +194,7 @@ class Integer extends Base
      */
     private static function regularPolynomialMultiply($x, $y)
     {
-        $precomputed = [ltrim($x, "\0")];
+        $precomputed = [ltrim((string) $x, "\0")];
         $x = strrev(BinaryField::base256ToBase2($x));
         $y = strrev(BinaryField::base256ToBase2($y));
         if (strlen($x) == strlen($y)) {
@@ -272,7 +272,7 @@ class Integer extends Base
             $z0
         );
 
-        return ltrim($xy, "\0");
+        return ltrim((string) $xy, "\0");
     }
 
     /**
@@ -415,7 +415,7 @@ class Integer extends Base
         }
 
         $temp = new static($this->instanceID);
-        $temp->value = ltrim($aux1, "\0");
+        $temp->value = ltrim((string) $aux1, "\0");
         return $temp;
     }
 

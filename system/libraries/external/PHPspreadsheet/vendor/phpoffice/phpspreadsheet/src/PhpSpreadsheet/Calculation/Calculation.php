@@ -3192,10 +3192,10 @@ class Calculation
         if (self::$functionReplaceToLocale === null) {
             self::$functionReplaceToLocale = [];
             foreach (self::$localeFunctions as $localeFunctionName) {
-                self::$functionReplaceToLocale[] = '$1' . trim($localeFunctionName) . '$2';
+                self::$functionReplaceToLocale[] = '$1' . trim((string) $localeFunctionName) . '$2';
             }
             foreach (self::$localeBoolean as $localeBoolean) {
-                self::$functionReplaceToLocale[] = '$1' . trim($localeBoolean) . '$2';
+                self::$functionReplaceToLocale[] = '$1' . trim((string) $localeBoolean) . '$2';
             }
         }
 
@@ -3228,10 +3228,10 @@ class Calculation
             self::$functionReplaceToExcel = [];
             foreach (array_keys(self::$localeFunctions) as $excelFunctionName) {
                 // @phpstan-ignore-next-line
-                self::$functionReplaceToExcel[] = '$1' . trim($excelFunctionName) . '$2';
+                self::$functionReplaceToExcel[] = '$1' . trim((string) $excelFunctionName) . '$2';
             }
             foreach (array_keys(self::$localeBoolean) as $excelBoolean) {
-                self::$functionReplaceToExcel[] = '$1' . trim($excelBoolean) . '$2';
+                self::$functionReplaceToExcel[] = '$1' . trim((string) $excelBoolean) . '$2';
             }
         }
 
@@ -3241,7 +3241,7 @@ class Calculation
     public static function localeFunc($function)
     {
         if (self::$localeLanguage !== 'en_us') {
-            $functionName = trim($function, '(');
+            $functionName = trim((string) $function, '(');
             if (isset(self::$localeFunctions[$functionName])) {
                 $brace = ($functionName != $function);
                 $function = self::$localeFunctions[$functionName];
@@ -3406,7 +3406,7 @@ class Calculation
     {
         //    Basic validation that this is indeed a formula
         //    We return an empty array if not
-        $formula = trim($formula);
+        $formula = trim((string) $formula);
         if ((!isset($formula[0])) || ($formula[0] != '=')) {
             return [];
         }
@@ -3515,7 +3515,7 @@ class Calculation
 
         //    Basic validation that this is indeed a formula
         //    We simply return the cell value if not
-        $formula = trim($formula);
+        $formula = trim((string) $formula);
         if ($formula[0] != '=') {
             return self::wrapResult($formula);
         }
@@ -3757,7 +3757,7 @@ class Calculation
                 }
 
                 return '{ ' . implode($rpad, $returnMatrix) . ' }';
-            } elseif (is_string($value) && (trim($value, self::FORMULA_STRING_QUOTE) == $value)) {
+            } elseif (is_string($value) && (trim((string) $value, self::FORMULA_STRING_QUOTE) == $value)) {
                 return self::FORMULA_STRING_QUOTE . $value . self::FORMULA_STRING_QUOTE;
             } elseif (is_bool($value)) {
                 return ($value) ? self::$localeBoolean['TRUE'] : self::$localeBoolean['FALSE'];
@@ -3906,7 +3906,7 @@ class Calculation
      */
     private function internalParseFormula($formula, ?Cell $cell = null)
     {
-        if (($formula = $this->convertMatrixReferences(trim($formula))) === false) {
+        if (($formula = $this->convertMatrixReferences(trim((string) $formula))) === false) {
             return false;
         }
 
@@ -4209,7 +4209,7 @@ class Calculation
                             if ($rangeWS1 !== '') {
                                 $rangeWS1 .= '!';
                             }
-                            $rangeSheetRef = trim($rangeSheetRef, "'");
+                            $rangeSheetRef = trim((string) $rangeSheetRef, "'");
                             [$rangeWS2, $val] = Worksheet::extractSheetTitle($val, true);
                             if ($rangeWS2 !== '') {
                                 $rangeWS2 .= '!';
@@ -4531,22 +4531,22 @@ class Calculation
                             $sheet2 = $sheet1;
                         }
 
-                        if (trim($sheet1, "'") === trim($sheet2, "'")) {
+                        if (trim((string) $sheet1, "'") === trim((string) $sheet2, "'")) {
                             if ($operand1Data['reference'] === null) {
-                                if ((trim($operand1Data['value']) != '') && (is_numeric($operand1Data['value']))) {
+                                if ((trim((string) $operand1Data['value']) != '') && (is_numeric($operand1Data['value']))) {
                                     $operand1Data['reference'] = $cell->getColumn() . $operand1Data['value'];
                                 // @phpstan-ignore-next-line
-                                } elseif (trim($operand1Data['reference']) == '') {
+                                } elseif (trim((string) $operand1Data['reference']) == '') {
                                     $operand1Data['reference'] = $cell->getCoordinate();
                                 } else {
                                     $operand1Data['reference'] = $operand1Data['value'] . $cell->getRow();
                                 }
                             }
                             if ($operand2Data['reference'] === null) {
-                                if ((trim($operand2Data['value']) != '') && (is_numeric($operand2Data['value']))) {
+                                if ((trim((string) $operand2Data['value']) != '') && (is_numeric($operand2Data['value']))) {
                                     $operand2Data['reference'] = $cell->getColumn() . $operand2Data['value'];
                                 // @phpstan-ignore-next-line
-                                } elseif (trim($operand2Data['reference']) == '') {
+                                } elseif (trim((string) $operand2Data['reference']) == '') {
                                     $operand2Data['reference'] = $cell->getCoordinate();
                                 } else {
                                     $operand2Data['reference'] = $operand2Data['value'] . $cell->getRow();
@@ -4708,12 +4708,12 @@ class Calculation
                     } else {
                         $cellRef = $matches[6] . $matches[7] . ':' . $matches[9] . $matches[10];
                         if ($matches[2] > '') {
-                            $matches[2] = trim($matches[2], "\"'");
+                            $matches[2] = trim((string) $matches[2], "\"'");
                             if ((strpos($matches[2], '[') !== false) || (strpos($matches[2], ']') !== false)) {
                                 //    It's a Reference to an external spreadsheet (not currently supported)
                                 return $this->raiseFormulaError('Unable to access External Workbook');
                             }
-                            $matches[2] = trim($matches[2], "\"'");
+                            $matches[2] = trim((string) $matches[2], "\"'");
                             $this->debugLog->writeDebugLog('Evaluating Cell Range %s in worksheet %s', $cellRef, $matches[2]);
                             if ($pCellParent !== null) {
                                 $cellValue = $this->extractCellRange($cellRef, $this->spreadsheet->getSheetByName($matches[2]), false);
@@ -4738,7 +4738,7 @@ class Calculation
                     } else {
                         $cellRef = $matches[6] . $matches[7];
                         if ($matches[2] > '') {
-                            $matches[2] = trim($matches[2], "\"'");
+                            $matches[2] = trim((string) $matches[2], "\"'");
                             if ((strpos($matches[2], '[') !== false) || (strpos($matches[2], ']') !== false)) {
                                 //    It's a Reference to an external spreadsheet (not currently supported)
                                 return $this->raiseFormulaError('Unable to access External Workbook');

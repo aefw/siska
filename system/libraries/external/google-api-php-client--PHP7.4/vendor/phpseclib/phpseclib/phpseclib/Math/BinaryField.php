@@ -100,7 +100,7 @@ class BinaryField extends FiniteField
             if (strlen($c) == $t) {
                 $c[0] = $c[0] & $finalMask;
             }
-            return ltrim($c, "\0");
+            return ltrim((string) $c, "\0");
         };
 
         $this->instanceID = self::$instanceCounter++;

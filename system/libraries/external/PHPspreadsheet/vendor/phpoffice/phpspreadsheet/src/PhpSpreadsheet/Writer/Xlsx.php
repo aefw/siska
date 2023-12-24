@@ -444,7 +444,7 @@ class Xlsx extends BaseWriter
                 foreach ($unparsedLoadedData['sheets'][$sheetCodeName]['Drawings'] as $relId => $drawingXml) {
                     $drawingFile = array_search($relId, $unparsedLoadedData['sheets'][$sheetCodeName]['drawingOriginalIds']);
                     if ($drawingFile !== false) {
-                        //$drawingFile = ltrim($drawingFile, '.');
+                        //$drawingFile = ltrim((string) $drawingFile, '.');
                         //$zipContent['xl' . $drawingFile] = $drawingXml;
                         $zipContent['xl/drawings/drawing' . ($i + 1) . '.xml'] = $drawingXml;
                     }

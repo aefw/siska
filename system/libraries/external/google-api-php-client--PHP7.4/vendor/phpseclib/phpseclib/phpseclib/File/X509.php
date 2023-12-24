@@ -1831,7 +1831,7 @@ class X509
         // handles everything else
         $results = preg_split('#((?:^|, *|/)(?:C=|O=|OU=|CN=|L=|ST=|SN=|postalCode=|streetAddress=|emailAddress=|serialNumber=|organizationalUnitName=|title=|description=|role=|x500UniqueIdentifier=|postalAddress=))#', $dn, -1, PREG_SPLIT_DELIM_CAPTURE);
         for ($i = 1; $i < count($results); $i+=2) {
-            $prop = trim($results[$i], ', =/');
+            $prop = trim((string) $results[$i], ', =/');
             $value = $results[$i + 1];
             if (!$this->setDNProp($prop, $value, $type)) {
                 return false;
@@ -1883,7 +1883,7 @@ class X509
                                     $v = ASN1::convert($v, $type);
                                     if ($v !== false) {
                                         $v = preg_replace('/\s+/', ' ', $v);
-                                        $attr['value'] = strtolower(trim($v));
+                                        $attr['value'] = strtolower(trim((string) $v));
                                         break;
                                     }
                                 }

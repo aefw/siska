@@ -89,7 +89,7 @@ class MessageFormatter implements MessageFormatterInterface
                         $result = $response ? Psr7\Message::toString($response) : '';
                         break;
                     case 'req_headers':
-                        $result = \trim($request->getMethod()
+                        $result = \trim((string) $request->getMethod()
                                 . ' ' . $request->getRequestTarget())
                             . ' HTTP/' . $request->getProtocolVersion() . "\r\n"
                             . $this->headers($request);
@@ -193,6 +193,6 @@ class MessageFormatter implements MessageFormatterInterface
             $result .= $name . ': ' . \implode(', ', $values) . "\r\n";
         }
 
-        return \trim($result);
+        return \trim((string) $result);
     }
 }

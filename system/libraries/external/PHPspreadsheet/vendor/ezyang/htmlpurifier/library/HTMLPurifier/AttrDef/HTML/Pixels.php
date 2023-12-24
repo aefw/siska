@@ -27,7 +27,7 @@ class HTMLPurifier_AttrDef_HTML_Pixels extends HTMLPurifier_AttrDef
      */
     public function validate($string, $config, $context)
     {
-        $string = trim($string);
+        $string = trim((string) $string);
         if ($string === '0') {
             return $string;
         }

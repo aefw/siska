@@ -326,7 +326,7 @@ class MediaFileUpload
       foreach ($body['error']['errors'] as $error) {
         $message .= "{$error['domain']}, {$error['message']};";
       }
-      $message = rtrim($message, ';');
+      $message = rtrim((string) $message, ';');
     }
 
     $error = "Failed to start the resumable upload (HTTP {$message})";

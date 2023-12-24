@@ -247,7 +247,7 @@ class StreamHandler
                     $message .= "[$key] $value" . \PHP_EOL;
                 }
             }
-            throw new \RuntimeException(\trim($message));
+            throw new \RuntimeException(\trim((string) $message));
         }
 
         return $resource;
@@ -386,7 +386,7 @@ class StreamHandler
             }
         }
 
-        $context['http']['header'] = \rtrim($context['http']['header']);
+        $context['http']['header'] = \rtrim((string) $context['http']['header']);
 
         return $context;
     }

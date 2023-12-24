@@ -932,7 +932,7 @@ class PHPMailer
                     str_replace(
                         "\n",
                         "\n                   \t                  ",
-                        trim($str)
+                        trim((string) $str)
                     )
                 ),
                 "\n";
@@ -1077,7 +1077,7 @@ class PHPMailer
     {
         $pos = false;
         if ($address !== null) {
-            $address = trim($address);
+            $address = trim((string) $address);
             $pos = strrpos($address, '@');
         }
         if (false === $pos) {
@@ -1236,7 +1236,7 @@ class PHPMailer
             //Use this simpler parser
             $list = explode(',', $addrstr);
             foreach ($list as $address) {
-                $address = trim($address);
+                $address = trim((string) $address);
                 //Is there a separate name part?
                 if (strpos($address, '<') === false) {
                     //No separate name, just use the whole thing
@@ -1249,7 +1249,7 @@ class PHPMailer
                 } else {
                     list($name, $email) = explode('<', $address);
                     $email = trim(str_replace('>', '', $email));
-                    $name = trim($name);
+                    $name = trim((string) $name);
                     if (static::validateAddress($email)) {
                         //Check for a Mbstring constant rather than using extension_loaded, which is sometimes disabled
                         //If this name is encoded, decode it
@@ -1264,7 +1264,7 @@ class PHPMailer
                         }
                         $addresses[] = [
                             //Remove any surrounding quotes and spaces from the name
-                            'name' => trim($name, '\'" '),
+                            'name' => trim((string) $name, '\'" '),
                             'address' => $email,
                         ];
                     }
@@ -1288,7 +1288,7 @@ class PHPMailer
      */
     public function setFrom($address, $name = '', $auto = true)
     {
-        $address = trim($address);
+        $address = trim((string) $address);
         $name = trim(preg_replace('/[\r\n]+/', '', $name)); //Strip breaks and trim
         //Don't validate now addresses with IDN. Will be done in send().
         $pos = strrpos($address, '@');
@@ -1555,7 +1555,7 @@ class PHPMailer
 
             //Validate From, Sender, and ConfirmReadingTo addresses
             foreach (['From', 'Sender', 'ConfirmReadingTo'] as $address_kind) {
-                $this->{$address_kind} = trim($this->{$address_kind});
+                $this->{$address_kind} = trim((string) $this->{$address_kind});
                 if (empty($this->{$address_kind})) {
                     continue;
                 }
@@ -1589,7 +1589,7 @@ class PHPMailer
             }
 
             //Trim subject consistently
-            $this->Subject = trim($this->Subject);
+            $this->Subject = trim((string) $this->Subject);
             //Create body before headers in case body makes changes to headers (e.g. altering transfer encoding)
             $this->MIMEHeader = '';
             $this->MIMEBody = $this->createBody();
@@ -2102,11 +2102,11 @@ class PHPMailer
             if (
                 !preg_match(
                     '/^(?:(ssl|tls):\/\/)?(.+?)(?::(\d+))?$/',
-                    trim($hostentry),
+                    trim((string) $hostentry),
                     $hostinfo
                 )
             ) {
-                $this->edebug($this->lang('invalid_hostentry') . ' ' . trim($hostentry));
+                $this->edebug($this->lang('invalid_hostentry') . ' ' . trim((string) $hostentry));
                 //Not a valid host entry
                 continue;
             }
@@ -2603,7 +2603,7 @@ class PHPMailer
                 $result .= $this->headerLine('To', 'undisclosed-recipients:;');
             }
         }
-        $result .= $this->addrAppend('From', [[trim($this->From), $this->FromName]]);
+        $result .= $this->addrAppend('From', [[trim((string) $this->From), $this->FromName]]);
 
         //sendmail and mail() extract Cc from the header before sending
         if (count($this->cc) > 0) {
@@ -2656,9 +2656,9 @@ class PHPMailer
                 'X-Mailer',
                 'PHPMailer ' . self::VERSION . ' (https://github.com/PHPMailer/PHPMailer)'
             );
-        } elseif (is_string($this->XMailer) && trim($this->XMailer) !== '') {
+        } elseif (is_string($this->XMailer) && trim((string) $this->XMailer) !== '') {
             //Some string
-            $result .= $this->headerLine('X-Mailer', trim($this->XMailer));
+            $result .= $this->headerLine('X-Mailer', trim((string) $this->XMailer));
         } //Other values result in no X-Mailer header
 
         if ('' !== $this->ConfirmReadingTo) {
@@ -2668,8 +2668,8 @@ class PHPMailer
         //Add custom headers
         foreach ($this->CustomHeader as $header) {
             $result .= $this->headerLine(
-                trim($header[0]),
-                $this->encodeHeader(trim($header[1]))
+                trim((string) $header[0]),
+                $this->encodeHeader(trim((string) $header[1]))
             );
         }
         if (!$this->sign_key_file) {
@@ -3502,7 +3502,7 @@ class PHPMailer
             case 'Q':
                 $encoded = $this->encodeQ($str, $position);
                 $encoded = $this->wrapText($encoded, $maxlen, true);
-                $encoded = str_replace('=' . static::$LE, "\n", trim($encoded));
+                $encoded = str_replace('=' . static::$LE, "\n", trim((string) $encoded));
                 $encoded = preg_replace('/^(.*)$/m', ' =?' . $charset . "?$encoding?\\1?=", $encoded);
                 break;
             default:
@@ -4184,8 +4184,8 @@ class PHPMailer
             //Value passed in as name:value
             list($name, $value) = explode(':', $name, 2);
         }
-        $name = trim($name);
-        $value = (null === $value) ? '' : trim($value);
+        $name = trim((string) $name);
+        $value = (null === $value) ? '' : trim((string) $value);
         //Ensure name is not empty, and that neither name nor value contain line breaks
         if (empty($name) || strpbrk($name . $value, "\r\n") !== false) {
             if ($this->exceptions) {
@@ -4632,7 +4632,7 @@ class PHPMailer
      */
     public static function stripTrailingWSP($text)
     {
-        return rtrim($text, " \r\n\t");
+        return rtrim((string) $text, " \r\n\t");
     }
 
     /**
@@ -4772,7 +4772,7 @@ class PHPMailer
             //But then says to delete space before and after the colon.
             //Net result is the same as trimming both ends of the value.
             //By elimination, the same applies to the field name
-            $lines[$key] = trim($heading, " \t") . ':' . trim($value, " \t");
+            $lines[$key] = trim((string) $heading, " \t") . ':' . trim((string) $value, " \t");
         }
 
         return implode(self::CRLF, $lines);

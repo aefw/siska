@@ -62,7 +62,7 @@ class DefaultValueBinder implements IValueBinder
         } elseif (is_string($pValue) && $pValue[0] === '=' && strlen($pValue) > 1) {
             return DataType::TYPE_FORMULA;
         } elseif (preg_match('/^[\+\-]?(\d+\\.?\d*|\d*\\.?\d+)([Ee][\-\+]?[0-2]?\d{1,3})?$/', $pValue)) {
-            $tValue = ltrim($pValue, '+-');
+            $tValue = ltrim((string) $pValue, '+-');
             if (is_string($pValue) && $tValue[0] === '0' && strlen($tValue) > 1 && $tValue[1] !== '.') {
                 return DataType::TYPE_STRING;
             } elseif ((strpos($pValue, '.') === false) && ($pValue > PHP_INT_MAX)) {

@@ -232,7 +232,7 @@ class HTMLPurifier_ConfigSchema_Validator
         } else {
             $prefix = ucfirst($this->getFormattedContext());
         }
-        throw new HTMLPurifier_ConfigSchema_Exception(trim($prefix . ' ' . $msg));
+        throw new HTMLPurifier_ConfigSchema_Exception(trim((string) $prefix . ' ' . $msg));
     }
 
     /**

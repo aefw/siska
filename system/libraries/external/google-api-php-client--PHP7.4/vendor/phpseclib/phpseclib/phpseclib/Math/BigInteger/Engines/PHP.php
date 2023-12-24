@@ -167,7 +167,7 @@ abstract class PHP extends Engine
             list($temp, $mod) = $temp->divide($divisor);
             $result = str_pad(isset($mod->value[0]) ? $mod->value[0] : '', static::MAX10LEN, '0', STR_PAD_LEFT) . $result;
         }
-        $result = ltrim($result, '0');
+        $result = ltrim((string) $result, '0');
         if (empty($result)) {
             $result = '0';
         }
@@ -283,7 +283,7 @@ abstract class PHP extends Engine
         }
 
         return [
-            self::VALUE => self::trim($value),
+            self::VALUE => self::trim((string) $value),
             self::SIGN => $x_negative
         ];
     }
@@ -373,7 +373,7 @@ abstract class PHP extends Engine
         }
 
         return [
-            self::VALUE => self::trim($x_value),
+            self::VALUE => self::trim((string) $x_value),
             self::SIGN => $x_negative
         ];
     }
@@ -743,7 +743,7 @@ abstract class PHP extends Engine
             return $result;
         }
 
-        $value = static::trim($value);
+        $value = static::trim((string) $value);
 
         if (!empty($result->bitmask->value)) {
             $length = min(count($value), count($result->bitmask->value));
@@ -951,7 +951,7 @@ abstract class PHP extends Engine
             $this->value[$i] = $temp;
         }
 
-        $this->value = static::trim($this->value);
+        $this->value = static::trim((string) $this->value);
     }
 
     /**
@@ -1260,7 +1260,7 @@ abstract class PHP extends Engine
                 $mask = $tempmask;
             }
             $temp = new static();
-            $temp->value = static::trim($digit);
+            $temp->value = static::trim((string) $digit);
             $vals[] = $temp;
         }
 

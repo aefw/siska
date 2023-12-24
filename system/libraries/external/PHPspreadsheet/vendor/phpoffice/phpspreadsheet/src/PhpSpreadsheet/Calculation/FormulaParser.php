@@ -71,7 +71,7 @@ class FormulaParser
         }
 
         // Initialise values
-        $this->formula = trim($formula);
+        $this->formula = trim((string) $formula);
         // Parse!
         $this->parseToTokens();
     }

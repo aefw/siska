@@ -1397,7 +1397,7 @@ class Xlsx extends BaseReader
                                     if (strpos((string) $definedName, '!') !== false) {
                                         // Extract sheet name
                                         $extractedSheetName = Worksheet::extractSheetTitle((string) $definedName, true);
-                                        $extractedSheetName = trim($extractedSheetName[0], "'");
+                                        $extractedSheetName = trim((string) $extractedSheetName[0], "'");
 
                                         // Locate sheet
                                         $locatedSheet = $excel->getSheetByName($extractedSheetName);
@@ -1499,7 +1499,7 @@ class Xlsx extends BaseReader
                 switch ($contentType['ContentType']) {
                     case 'application/vnd.openxmlformats-officedocument.drawingml.chart+xml':
                         if ($this->includeCharts) {
-                            $chartEntryRef = ltrim($contentType['PartName'], '/');
+                            $chartEntryRef = ltrim((string) $contentType['PartName'], '/');
                             $chartElements = simplexml_load_string(
                                 $this->securityScanner->scan(
                                     $this->getFromZipArchive($zip, $chartEntryRef)

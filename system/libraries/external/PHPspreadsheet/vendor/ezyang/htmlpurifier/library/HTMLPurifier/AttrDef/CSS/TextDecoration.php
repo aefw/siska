@@ -35,7 +35,7 @@ class HTMLPurifier_AttrDef_CSS_TextDecoration extends HTMLPurifier_AttrDef
                 $final .= $part . ' ';
             }
         }
-        $final = rtrim($final);
+        $final = rtrim((string) $final);
         if ($final === '') {
             return false;
         }

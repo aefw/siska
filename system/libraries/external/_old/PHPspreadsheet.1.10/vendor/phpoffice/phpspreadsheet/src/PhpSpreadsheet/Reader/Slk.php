@@ -138,7 +138,7 @@ class Slk extends BaseReader
 
             // explode each row at semicolons while taking into account that literal semicolon (;)
             // is escaped like this (;;)
-            $rowData = explode("\t", str_replace('¤', ';', str_replace(';', "\t", str_replace(';;', '¤', rtrim($rowData)))));
+            $rowData = explode("\t", str_replace('¤', ';', str_replace(';', "\t", str_replace(';;', '¤', rtrim((string) $rowData)))));
 
             $dataType = array_shift($rowData);
             if ($dataType == 'C') {
@@ -229,7 +229,7 @@ class Slk extends BaseReader
 
             // explode each row at semicolons while taking into account that literal semicolon (;)
             // is escaped like this (;;)
-            $rowData = explode("\t", str_replace('¤', ';', str_replace(';', "\t", str_replace(';;', '¤', rtrim($rowData)))));
+            $rowData = explode("\t", str_replace('¤', ';', str_replace(';', "\t", str_replace(';;', '¤', rtrim((string) $rowData)))));
 
             $dataType = array_shift($rowData);
             //    Read shared styles
@@ -329,7 +329,7 @@ class Slk extends BaseReader
                                         }
                                         //    Bracketed R references are relative to the current row
                                         if ($rowReference[0] == '[') {
-                                            $rowReference = $row + trim($rowReference, '[]');
+                                            $rowReference = $row + trim((string) $rowReference, '[]');
                                         }
                                         $columnReference = $cellReference[4][0];
                                         //    Empty C reference is the current column
@@ -338,7 +338,7 @@ class Slk extends BaseReader
                                         }
                                         //    Bracketed C references are relative to the current column
                                         if ($columnReference[0] == '[') {
-                                            $columnReference = $column + trim($columnReference, '[]');
+                                            $columnReference = $column + trim((string) $columnReference, '[]');
                                         }
                                         $A1CellReference = Coordinate::stringFromColumnIndex($columnReference) . $rowReference;
 

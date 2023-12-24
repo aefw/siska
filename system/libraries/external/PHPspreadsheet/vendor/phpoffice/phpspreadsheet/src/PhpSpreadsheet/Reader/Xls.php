@@ -1234,7 +1234,7 @@ class Xls extends BaseReader
                             //        Foo!$C$7:$J$66
                             //        Bar!$A$1:$IV$2
                             $explodes = Worksheet::extractSheetTitle($range, true);
-                            $sheetName = trim($explodes[0], "'");
+                            $sheetName = trim((string) $explodes[0], "'");
                             if (count($explodes) == 2) {
                                 if (strpos($explodes[1], ':') === false) {
                                     $explodes[1] = $explodes[1] . ':' . $explodes[1];
@@ -1294,7 +1294,7 @@ class Xls extends BaseReader
                     $explodes = Worksheet::extractSheetTitle($definedName['formula'], true);
                     if (
                         ($docSheet = $this->spreadsheet->getSheetByName($explodes[0])) ||
-                        ($docSheet = $this->spreadsheet->getSheetByName(trim($explodes[0], "'")))
+                        ($docSheet = $this->spreadsheet->getSheetByName(trim((string) $explodes[0], "'")))
                     ) {
                         $extractedRange = $explodes[1];
                         $extractedRange = str_replace('$', '', $extractedRange);
@@ -1453,7 +1453,7 @@ class Xls extends BaseReader
                     $byteLength = self::getInt4d($this->summaryInformation, $secOffset + 4 + $offset);
                     $value = substr($this->summaryInformation, $secOffset + 8 + $offset, $byteLength);
                     $value = StringHelper::convertEncoding($value, 'UTF-8', $codePage);
-                    $value = rtrim($value);
+                    $value = rtrim((string) $value);
 
                     break;
                 case 0x40: // Filetime (64-bit value representing the number of 100-nanosecond intervals since January 1, 1601)
@@ -1605,7 +1605,7 @@ class Xls extends BaseReader
                     $byteLength = self::getInt4d($this->documentSummaryInformation, $secOffset + 4 + $offset);
                     $value = substr($this->documentSummaryInformation, $secOffset + 8 + $offset, $byteLength);
                     $value = StringHelper::convertEncoding($value, 'UTF-8', $codePage);
-                    $value = rtrim($value);
+                    $value = rtrim((string) $value);
 
                     break;
                 case 0x40:    //    Filetime (64-bit value representing the number of 100-nanosecond intervals since January 1, 1601)
@@ -3774,13 +3774,13 @@ class Xls extends BaseReader
                         }
                     }
                 }
-                if ($this->readEmptyCells || trim($richText->getPlainText()) !== '') {
+                if ($this->readEmptyCells || trim((string) $richText->getPlainText()) !== '') {
                     $cell = $this->phpSheet->getCell($columnString . ($row + 1));
                     $cell->setValueExplicit($richText, DataType::TYPE_STRING);
                     $emptyCell = false;
                 }
             } else {
-                if ($this->readEmptyCells || trim($this->sst[$index]['value']) !== '') {
+                if ($this->readEmptyCells || trim((string) $this->sst[$index]['value']) !== '') {
                     $cell = $this->phpSheet->getCell($columnString . ($row + 1));
                     $cell->setValueExplicit($this->sst[$index]['value'], DataType::TYPE_STRING);
                     $emptyCell = false;
@@ -4217,7 +4217,7 @@ class Xls extends BaseReader
                 $string = $this->readByteStringLong(substr($recordData, 6));
                 $value = $string['value'];
             }
-            if ($this->readEmptyCells || trim($value) !== '') {
+            if ($this->readEmptyCells || trim((string) $value) !== '') {
                 $cell = $this->phpSheet->getCell($columnString . ($row + 1));
                 $cell->setValueExplicit($value, DataType::TYPE_STRING);
 

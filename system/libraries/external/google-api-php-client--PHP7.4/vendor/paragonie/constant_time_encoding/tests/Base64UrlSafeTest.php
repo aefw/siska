@@ -31,7 +31,7 @@ class Base64UrlSafeTest extends PHPUnit\Framework\TestCase
                     $enc
                 );
 
-                $unpadded = \rtrim($enc, '=');
+                $unpadded = \rtrim((string) $enc, '=');
                 $this->assertSame(
                     $unpadded,
                     Base64UrlSafe::encodeUnpadded($random)

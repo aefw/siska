@@ -115,7 +115,7 @@ class NamedExpressions
                     }
                 }
             } else {
-                $worksheet = str_replace("''", "'", trim($worksheet, "'"));
+                $worksheet = str_replace("''", "'", trim((string) $worksheet, "'"));
             }
             if (!empty($worksheet)) {
                 $newRange = "'" . str_replace("'", "''", $worksheet) . "'.";

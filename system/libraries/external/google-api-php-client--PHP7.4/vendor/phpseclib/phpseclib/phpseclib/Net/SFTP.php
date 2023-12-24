@@ -1104,7 +1104,7 @@ class SFTP extends SSH2
             return;
         }
 
-        // preg_replace('#^/|/(?=/)|/$#', '', $dir) == str_replace('//', '/', trim($path, '/'))
+        // preg_replace('#^/|/(?=/)|/$#', '', $dir) == str_replace('//', '/', trim((string) $path, '/'))
         $dirs = explode('/', preg_replace('#^/|/(?=/)|/$#', '', $path));
 
         $temp = &$this->stat_cache;

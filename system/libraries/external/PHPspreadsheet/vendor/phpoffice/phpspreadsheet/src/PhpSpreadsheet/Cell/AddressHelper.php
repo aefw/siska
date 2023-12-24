@@ -29,7 +29,7 @@ class AddressHelper
         }
         //    Bracketed R references are relative to the current row
         if ($rowReference[0] === '[') {
-            $rowReference = $currentRowNumber + (int) trim($rowReference, '[]');
+            $rowReference = $currentRowNumber + (int) trim((string) $rowReference, '[]');
         }
         $columnReference = $cellReference[4];
         //    Empty C reference is the current column
@@ -38,7 +38,7 @@ class AddressHelper
         }
         //    Bracketed C references are relative to the current column
         if (is_string($columnReference) && $columnReference[0] === '[') {
-            $columnReference = $currentColumnNumber + (int) trim($columnReference, '[]');
+            $columnReference = $currentColumnNumber + (int) trim((string) $columnReference, '[]');
         }
 
         if ($columnReference <= 0 || $rowReference <= 0) {

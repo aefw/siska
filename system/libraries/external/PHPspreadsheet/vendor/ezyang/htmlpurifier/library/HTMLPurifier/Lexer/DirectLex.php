@@ -396,7 +396,7 @@ class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
         } elseif ($num_equal === 1 && !$has_space) {
             // only one attribute
             list($key, $quoted_value) = explode('=', $string);
-            $quoted_value = trim($quoted_value);
+            $quoted_value = trim((string) $quoted_value);
             if (!$key) {
                 if ($e) {
                     $e->send(E_ERROR, 'Lexer: Missing attribute key');

@@ -168,7 +168,7 @@ class BCMath extends Engine
             return '0';
         }
 
-        return ltrim($this->value, '0');
+        return ltrim((string) $this->value, '0');
     }
 
     /**
@@ -198,7 +198,7 @@ class BCMath extends Engine
 
         return $this->precision > 0 ?
             substr(str_pad($value, $this->precision >> 3, chr(0), STR_PAD_LEFT), -($this->precision >> 3)) :
-            ltrim($value, chr(0));
+            ltrim((string) $value, chr(0));
     }
 
     /**

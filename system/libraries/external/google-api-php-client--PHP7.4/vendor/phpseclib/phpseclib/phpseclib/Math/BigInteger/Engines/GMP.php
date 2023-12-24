@@ -206,7 +206,7 @@ class GMP extends Engine
 
         return $this->precision > 0 ?
             substr(str_pad($temp, $this->precision >> 3, chr(0), STR_PAD_LEFT), -($this->precision >> 3)) :
-            ltrim($temp, chr(0));
+            ltrim((string) $temp, chr(0));
     }
 
     /**

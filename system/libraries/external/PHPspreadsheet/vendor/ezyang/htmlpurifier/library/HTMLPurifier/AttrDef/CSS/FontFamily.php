@@ -67,7 +67,7 @@ class HTMLPurifier_AttrDef_CSS_FontFamily extends HTMLPurifier_AttrDef
         $fonts = explode(',', $string);
         $final = '';
         foreach ($fonts as $font) {
-            $font = trim($font);
+            $font = trim((string) $font);
             if ($font === '') {
                 continue;
             }
@@ -207,7 +207,7 @@ class HTMLPurifier_AttrDef_CSS_FontFamily extends HTMLPurifier_AttrDef
             // font possibly with spaces, requires quoting
             $final .= "'$font', ";
         }
-        $final = rtrim($final, ', ');
+        $final = rtrim((string) $final, ', ');
         if ($final === '') {
             return false;
         }

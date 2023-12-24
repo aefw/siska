@@ -585,12 +585,12 @@ class ReferenceHelper
                         $modified4 = substr($this->updateCellReference('$A' . $match[4], $includeAbsoluteReferences), 2);
 
                         if ($match[3] . ':' . $match[4] !== $modified3 . ':' . $modified4) {
-                            if (($match[2] == '') || (trim($match[2], "'") == $worksheetName)) {
+                            if (($match[2] == '') || (trim((string) $match[2], "'") == $worksheetName)) {
                                 $toString = ($match[2] > '') ? $match[2] . '!' : '';
                                 $toString .= $modified3 . ':' . $modified4;
                                 //    Max worksheet size is 1,048,576 rows by 16,384 columns in Excel 2007, so our adjustments need to be at least one digit more
                                 $column = 100000;
-                                $row = 10000000 + (int) trim($match[3], '$');
+                                $row = 10000000 + (int) trim((string) $match[3], '$');
                                 $cellIndex = $column . $row;
 
                                 $newCellTokens[$cellIndex] = preg_quote($toString, '/');
@@ -610,11 +610,11 @@ class ReferenceHelper
                         $modified4 = substr($this->updateCellReference($match[4] . '$1', $includeAbsoluteReferences), 0, -2);
 
                         if ($match[3] . ':' . $match[4] !== $modified3 . ':' . $modified4) {
-                            if (($match[2] == '') || (trim($match[2], "'") == $worksheetName)) {
+                            if (($match[2] == '') || (trim((string) $match[2], "'") == $worksheetName)) {
                                 $toString = ($match[2] > '') ? $match[2] . '!' : '';
                                 $toString .= $modified3 . ':' . $modified4;
                                 //    Max worksheet size is 1,048,576 rows by 16,384 columns in Excel 2007, so our adjustments need to be at least one digit more
-                                $column = Coordinate::columnIndexFromString(trim($match[3], '$')) + 100000;
+                                $column = Coordinate::columnIndexFromString(trim((string) $match[3], '$')) + 100000;
                                 $row = 10000000;
                                 $cellIndex = $column . $row;
 
@@ -635,13 +635,13 @@ class ReferenceHelper
                         $modified4 = $this->updateCellReference($match[4], $includeAbsoluteReferences);
 
                         if ($match[3] . $match[4] !== $modified3 . $modified4) {
-                            if (($match[2] == '') || (trim($match[2], "'") == $worksheetName)) {
+                            if (($match[2] == '') || (trim((string) $match[2], "'") == $worksheetName)) {
                                 $toString = ($match[2] > '') ? $match[2] . '!' : '';
                                 $toString .= $modified3 . ':' . $modified4;
                                 [$column, $row] = Coordinate::coordinateFromString($match[3]);
                                 //    Max worksheet size is 1,048,576 rows by 16,384 columns in Excel 2007, so our adjustments need to be at least one digit more
-                                $column = Coordinate::columnIndexFromString(trim($column, '$')) + 100000;
-                                $row = (int) trim($row, '$') + 10000000;
+                                $column = Coordinate::columnIndexFromString(trim((string) $column, '$')) + 100000;
+                                $row = (int) trim((string) $row, '$') + 10000000;
                                 $cellIndex = $column . $row;
 
                                 $newCellTokens[$cellIndex] = preg_quote($toString, '/');
@@ -661,15 +661,15 @@ class ReferenceHelper
 
                         $modified3 = $this->updateCellReference($match[3], $includeAbsoluteReferences);
                         if ($match[3] !== $modified3) {
-                            if (($match[2] == '') || (trim($match[2], "'") == $worksheetName)) {
+                            if (($match[2] == '') || (trim((string) $match[2], "'") == $worksheetName)) {
                                 $toString = ($match[2] > '') ? $match[2] . '!' : '';
                                 $toString .= $modified3;
                                 [$column, $row] = Coordinate::coordinateFromString($match[3]);
                                 $columnAdditionalIndex = $column[0] === '$' ? 1 : 0;
                                 $rowAdditionalIndex = $row[0] === '$' ? 1 : 0;
                                 //    Max worksheet size is 1,048,576 rows by 16,384 columns in Excel 2007, so our adjustments need to be at least one digit more
-                                $column = Coordinate::columnIndexFromString(trim($column, '$')) + 100000;
-                                $row = (int) trim($row, '$') + 10000000;
+                                $column = Coordinate::columnIndexFromString(trim((string) $column, '$')) + 100000;
+                                $row = (int) trim((string) $row, '$') + 10000000;
                                 $cellIndex = $row . $rowAdditionalIndex . $column . $columnAdditionalIndex;
 
                                 $newCellTokens[$cellIndex] = preg_quote($toString, '/');

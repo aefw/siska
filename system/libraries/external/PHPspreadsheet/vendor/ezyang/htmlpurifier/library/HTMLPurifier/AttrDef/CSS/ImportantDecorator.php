@@ -34,7 +34,7 @@ class HTMLPurifier_AttrDef_CSS_ImportantDecorator extends HTMLPurifier_AttrDef
     public function validate($string, $config, $context)
     {
         // test for ! and important tokens
-        $string = trim($string);
+        $string = trim((string) $string);
         $is_important = false;
         // :TODO: optimization: test directly for !important and ! important
         if (strlen($string) >= 9 && substr($string, -9) === 'important') {

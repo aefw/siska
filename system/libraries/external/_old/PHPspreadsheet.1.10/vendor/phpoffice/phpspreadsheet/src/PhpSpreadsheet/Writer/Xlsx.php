@@ -333,7 +333,7 @@ class Xlsx extends BaseWriter
                     foreach ($unparsedLoadedData['sheets'][$sheetCodeName]['Drawings'] as $relId => $drawingXml) {
                         $drawingFile = array_search($relId, $unparsedLoadedData['sheets'][$sheetCodeName]['drawingOriginalIds']);
                         if ($drawingFile !== false) {
-                            $drawingFile = ltrim($drawingFile, '.');
+                            $drawingFile = ltrim((string) $drawingFile, '.');
                             $zip->addFromString('xl' . $drawingFile, $drawingXml);
                         }
                     }

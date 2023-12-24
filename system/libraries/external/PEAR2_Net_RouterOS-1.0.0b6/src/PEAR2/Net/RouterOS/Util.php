@@ -512,7 +512,7 @@ class Util implements Countable
                 }
             }
         }
-        return rtrim($idList, ',');
+        return rtrim((string) $idList, ',');
     }
 
     /**

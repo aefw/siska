@@ -76,8 +76,8 @@ class HTMLPurifier_AttrDef_CSS extends HTMLPurifier_AttrDef
                 continue;
             }
             list($property, $value) = explode(':', $declaration, 2);
-            $property = trim($property);
-            $value = trim($value);
+            $property = trim((string) $property);
+            $value = trim((string) $value);
             $ok = false;
             do {
                 if (isset($definition->info[$property])) {
@@ -97,7 +97,7 @@ class HTMLPurifier_AttrDef_CSS extends HTMLPurifier_AttrDef
                 continue;
             }
             // inefficient call, since the validator will do this again
-            if (strtolower(trim($value)) !== 'inherit') {
+            if (strtolower(trim((string) $value)) !== 'inherit') {
                 // inherit works for everything (but only on the base property)
                 $result = $definition->info[$property]->validate(
                     $value,

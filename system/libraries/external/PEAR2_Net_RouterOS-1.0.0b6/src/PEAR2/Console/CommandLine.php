@@ -739,7 +739,7 @@ class CommandLine
      */
     public function findOption($str)
     {
-        $str = trim($str);
+        $str = trim((string) $str);
         if ($str === '') {
             return false;
         }
@@ -1041,7 +1041,7 @@ class CommandLine
         if (!$this->_stopflag && substr($token, 0, 2) == '--') {
             // a long option
             $optkv = explode('=', $token, 2);
-            if (trim($optkv[0]) == '--') {
+            if (trim((string) $optkv[0]) == '--') {
                 // the special argument "--" forces in all cases the end of
                 // option scanning.
                 $this->_stopflag = true;

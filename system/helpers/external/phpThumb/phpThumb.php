@@ -54,7 +54,7 @@ function RedirectToCachedFile() {
 	global $phpThumb;
 
 	$nice_cachefile = str_replace(DIRECTORY_SEPARATOR, '/', $phpThumb->cache_filename);
-	$nice_docroot   = str_replace(DIRECTORY_SEPARATOR, '/', rtrim($phpThumb->config_document_root, '/\\'));
+	$nice_docroot   = str_replace(DIRECTORY_SEPARATOR, '/', rtrim((string) $phpThumb->config_document_root, '/\\'));
 
 	$parsed_url = phpthumb_functions::ParseURLbetter(@$_SERVER['HTTP_REFERER']);
 

@@ -713,7 +713,7 @@ class Spreadsheet
     {
         $worksheetCount = count($this->workSheetCollection);
         for ($i = 0; $i < $worksheetCount; ++$i) {
-            if ($this->workSheetCollection[$i]->getTitle() === trim($worksheetName, "'")) {
+            if ($this->workSheetCollection[$i]->getTitle() === trim((string) $worksheetName, "'")) {
                 return $this->workSheetCollection[$i];
             }
         }

@@ -19,7 +19,7 @@ class HTMLPurifier_AttrDef_HTML_Color extends HTMLPurifier_AttrDef
             $colors = $config->get('Core.ColorKeywords');
         }
 
-        $string = trim($string);
+        $string = trim((string) $string);
 
         if (empty($string)) {
             return false;

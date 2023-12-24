@@ -1548,7 +1548,7 @@ class HTML5
 
         // Return a character token for the character corresponding to the
         // entity name (as given by the second column of the entities table).
-        return html_entity_decode('&' . rtrim($entity, ';') . ';', ENT_QUOTES, 'UTF-8');
+        return html_entity_decode('&' . rtrim((string) $entity, ';') . ';', ENT_QUOTES, 'UTF-8');
     }
 
     private function emitToken($token)
@@ -4399,7 +4399,7 @@ class HTML5TreeConstructer
             // removing anything that's not an ASCII letter, digit, or hyphen
             $token['name'] = preg_replace('/[^a-z0-9-]/i', '', $token['name']);
             // Remove leading hyphens and numbers
-            $token['name'] = ltrim($token['name'], '-0..9');
+            $token['name'] = ltrim((string) $token['name'], '-0..9');
             // In theory, this should ever be needed, but just in case
             if ($token['name'] === '') {
                 $token['name'] = 'span';

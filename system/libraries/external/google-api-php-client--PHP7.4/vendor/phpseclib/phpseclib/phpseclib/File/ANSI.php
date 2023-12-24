@@ -538,7 +538,7 @@ class ANSI
         $output = substr($output, 0, -2);
         // close any remaining open tags
         $output.= $this->processCoordinate($last_attr, $this->base_attr_cell, '');
-        return rtrim($output);
+        return rtrim((string) $output);
     }
 
     /**

@@ -197,7 +197,7 @@ class HTMLPurifier_Generator
         }
         // Thanks <http://lachy.id.au/log/2005/05/script-comments>
         $data = preg_replace('#//\s*$#', '', $token->data);
-        return '<!--//--><![CDATA[//><!--' . "\n" . trim($data) . "\n" . '//--><!]]>';
+        return '<!--//--><![CDATA[//><!--' . "\n" . trim((string) $data) . "\n" . '//--><!]]>';
     }
 
     /**
@@ -259,7 +259,7 @@ class HTMLPurifier_Generator
             }
             $html .= $key.'="'.$this->escape($value).'" ';
         }
-        return rtrim($html);
+        return rtrim((string) $html);
     }
 
     /**

@@ -33,7 +33,7 @@ final class Utils
                 /** @var string $varDumpContent */
                 $varDumpContent = \ob_get_clean();
 
-                return \str_replace('double(', 'float(', \rtrim($varDumpContent));
+                return \str_replace('double(', 'float(', \rtrim((string) $varDumpContent));
         }
     }
 
@@ -49,7 +49,7 @@ final class Utils
 
         foreach ($lines as $line) {
             $parts = \explode(':', $line, 2);
-            $headers[\trim($parts[0])][] = isset($parts[1]) ? \trim($parts[1]) : null;
+            $headers[\trim((string) $parts[0])][] = isset($parts[1]) ? \trim((string) $parts[1]) : null;
         }
 
         return $headers;
@@ -244,7 +244,7 @@ EOT
             }
             // Special match if the area when prefixed with ".". Remove any
             // existing leading "." and add a new leading ".".
-            $area = '.' . \ltrim($area, '.');
+            $area = '.' . \ltrim((string) $area, '.');
             if (\substr($host, -(\strlen($area))) === $area) {
                 return true;
             }

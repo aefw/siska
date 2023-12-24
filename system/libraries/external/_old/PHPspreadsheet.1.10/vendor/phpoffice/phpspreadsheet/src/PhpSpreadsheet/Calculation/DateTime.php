@@ -1111,7 +1111,7 @@ class DateTime
         if (!empty($dateArgs)) {
             $holidayCountedArray = $holidayDates = [];
             foreach ($dateArgs as $holidayDate) {
-                if (($holidayDate !== null) && (trim($holidayDate) > '')) {
+                if (($holidayDate !== null) && (trim((string) $holidayDate) > '')) {
                     if (is_string($holidayDate = self::getDateValue($holidayDate))) {
                         return Functions::VALUE();
                     }
