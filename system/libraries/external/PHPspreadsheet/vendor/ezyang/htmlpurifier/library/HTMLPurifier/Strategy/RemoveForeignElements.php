@@ -152,7 +152,7 @@ class HTMLPurifier_Strategy_RemoveForeignElements extends HTMLPurifier_Strategy
                     $trailing_hyphen = false;
                     if ($e) {
                         // perform check whether or not there's a trailing hyphen
-                        if (substr($token->data, -1) == '-') {
+                        if (substr((string) $token->data, -1) == '-') {
                             $trailing_hyphen = true;
                         }
                     }

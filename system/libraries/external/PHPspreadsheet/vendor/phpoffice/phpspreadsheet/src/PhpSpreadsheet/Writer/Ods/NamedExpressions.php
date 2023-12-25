@@ -128,11 +128,11 @@ class NamedExpressions
                 $newRange .= $row;
             }
 
-            $address = substr($address, 0, $offset) . $newRange . substr($address, $offset + $length);
+            $address = substr((string) $address, 0, $offset) . $newRange . substr((string) $address, $offset + $length);
         }
 
-        if (substr($address, 0, 1) === '=') {
-            $address = substr($address, 1);
+        if (substr((string) $address, 0, 1) === '=') {
+            $address = substr((string) $address, 1);
         }
 
         return $address;

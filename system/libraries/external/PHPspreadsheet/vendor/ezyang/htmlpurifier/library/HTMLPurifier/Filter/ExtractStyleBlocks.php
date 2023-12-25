@@ -131,10 +131,10 @@ class HTMLPurifier_Filter_ExtractStyleBlocks extends HTMLPurifier_Filter
         // remove comments from CSS
         $css = trim((string) $css);
         if (strncmp('<!--', $css, 4) === 0) {
-            $css = substr($css, 4);
+            $css = substr((string) $css, 4);
         }
-        if (strlen($css) > 3 && substr($css, -3) == '-->') {
-            $css = substr($css, 0, -3);
+        if (strlen((string) $css) > 3 && substr((string) $css, -3) == '-->') {
+            $css = substr((string) $css, 0, -3);
         }
         $css = trim((string) $css);
         set_error_handler('htmlpurifier_filter_extractstyleblocks_muteerrorhandler');
@@ -240,7 +240,7 @@ class HTMLPurifier_Filter_ExtractStyleBlocks extends HTMLPurifier_Filter
                             for ($j = 0, $cc = count($components); $j < $cc; $j++) {
                                 $y = $components[$j];
                                 if ($j === 0) {
-                                    if ($y === '*' || isset($html_definition->info[$y = strtolower($y)])) {
+                                    if ($y === '*' || isset($html_definition->info[$y = strtolower((string) $y)])) {
                                         $nx = $y;
                                     } else {
                                         // $nx stays null; this matters

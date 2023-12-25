@@ -31,7 +31,7 @@ class HTMLPurifier_AttrDef_CSS_Filter extends HTMLPurifier_AttrDef
         }
         // if we looped this we could support multiple filters
         $function_length = strcspn($value, '(');
-        $function = trim(substr($value, 0, $function_length));
+        $function = trim(substr((string) $value, 0, $function_length));
         if ($function !== 'alpha' &&
             $function !== 'Alpha' &&
             $function !== 'progid:DXImageTransform.Microsoft.Alpha'
@@ -40,7 +40,7 @@ class HTMLPurifier_AttrDef_CSS_Filter extends HTMLPurifier_AttrDef
         }
         $cursor = $function_length + 1;
         $parameters_length = strcspn($value, ')', $cursor);
-        $parameters = substr($value, $cursor, $parameters_length);
+        $parameters = substr((string) $value, $cursor, $parameters_length);
         $params = explode(',', $parameters);
         $ret_params = array();
         $lookup = array();

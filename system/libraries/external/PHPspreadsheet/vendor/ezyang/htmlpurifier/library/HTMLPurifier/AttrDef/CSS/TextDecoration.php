@@ -22,7 +22,7 @@ class HTMLPurifier_AttrDef_CSS_TextDecoration extends HTMLPurifier_AttrDef
             'underline' => true,
         );
 
-        $string = strtolower($this->parseCDATA($string));
+        $string = strtolower((string) $this->parseCDATA($string));
 
         if ($string === 'none') {
             return $string;

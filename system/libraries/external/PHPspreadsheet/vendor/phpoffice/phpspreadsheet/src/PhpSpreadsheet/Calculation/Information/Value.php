@@ -264,7 +264,7 @@ class Value
                 return (int) $value;
             case 'string':
                 //    Errors
-                if ((strlen($value) > 0) && ($value[0] == '#')) {
+                if ((strlen((string) $value) > 0) && ($value[0] == '#')) {
                     return $value;
                 }
 
@@ -316,7 +316,7 @@ class Value
             return 64;
         } elseif (is_string($value)) {
             //    Errors
-            if ((strlen($value) > 0) && ($value[0] == '#')) {
+            if ((strlen((string) $value) > 0) && ($value[0] == '#')) {
                 return 16;
             }
 

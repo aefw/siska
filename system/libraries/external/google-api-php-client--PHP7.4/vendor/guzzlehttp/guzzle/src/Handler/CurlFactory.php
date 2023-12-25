@@ -460,7 +460,7 @@ class CurlFactory implements CurlFactoryInterface
             # see https://curl.se/libcurl/c/CURLOPT_SSLCERTTYPE.html
             $ext = pathinfo($cert, \PATHINFO_EXTENSION);
             if (preg_match('#^(der|p12)$#i', $ext)) {
-                $conf[\CURLOPT_SSLCERTTYPE] = strtoupper($ext);
+                $conf[\CURLOPT_SSLCERTTYPE] = strtoupper((string) $ext);
             }
             $conf[\CURLOPT_SSLCERT] = $cert;
         }
@@ -586,7 +586,7 @@ class CurlFactory implements CurlFactoryInterface
             } else {
                 $easy->headers[] = $value;
             }
-            return \strlen($h);
+            return \strlen((string) $h);
         };
     }
 }

@@ -216,7 +216,7 @@ abstract class AbstractElement
             $mediaPart .= $this->docPartId;
         }
 
-        return strtolower($mediaPart);
+        return strtolower((string) $mediaPart);
     }
 
     /**
@@ -397,7 +397,7 @@ abstract class AbstractElement
         if ($this instanceof Image) {
             $image = $this;
         }
-        $rId = Media::addElement($mediaPart, strtolower($elementName), $source, $image);
+        $rId = Media::addElement($mediaPart, strtolower((string) $elementName), $source, $image);
         $this->setRelationId($rId);
 
         if ($this instanceof OLEObject) {

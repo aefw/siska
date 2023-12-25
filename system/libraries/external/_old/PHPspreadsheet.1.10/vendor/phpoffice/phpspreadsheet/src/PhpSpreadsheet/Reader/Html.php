@@ -197,7 +197,7 @@ class Html extends BaseReader
 
     private static function containsTags($data)
     {
-        return strlen($data) !== strlen(strip_tags($data));
+        return strlen((string) $data) !== strlen(strip_tags($data));
     }
 
     /**
@@ -851,7 +851,7 @@ class Html extends BaseReader
     public function getStyleColor($value)
     {
         if (strpos($value, '#') === 0) {
-            return substr($value, 1);
+            return substr((string) $value, 1);
         }
 
         return null;

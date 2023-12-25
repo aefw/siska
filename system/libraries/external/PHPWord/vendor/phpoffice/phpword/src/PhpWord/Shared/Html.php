@@ -101,7 +101,7 @@ class Html
 
             foreach ($attributes as $attribute) {
                 $val = $attribute->value;
-                switch (strtolower($attribute->name)) {
+                switch (strtolower((string) $attribute->name)) {
                     case 'style':
                         $styles = self::parseStyle($attribute, $styles);
                         break;
@@ -651,7 +651,7 @@ class Html
                     break;
                 case 'font-family':
                     $cValue = array_map('trim', explode(',', $cValue));
-                    $styles['name'] = ucwords($cValue[0]);
+                    $styles['name'] = ucwords((string) $cValue[0]);
                     break;
                 case 'color':
                     $styles['color'] = trim((string) $cValue, '#');
@@ -747,7 +747,7 @@ class Html
                         if (false !== strpos($cKey, '-')) {
                             $tmp = explode('-', $cKey);
                             $which = $tmp[1];
-                            $which = ucfirst($which); // e.g. bottom -> Bottom
+                            $which = ucfirst((string) $which); // e.g. bottom -> Bottom
                         } else {
                             $which = '';
                         }
@@ -943,7 +943,7 @@ class Html
      */
     protected static function mapAlignVertical($alignment)
     {
-        $alignment = strtolower($alignment);
+        $alignment = strtolower((string) $alignment);
         switch ($alignment) {
             case 'top':
             case 'baseline':
@@ -1017,7 +1017,7 @@ class Html
         $styles['font'] = self::parseInlineStyle($node, $styles['font']);
 
         if (strpos($target, '#') === 0) {
-            return $element->addLink(substr($target, 1), $node->textContent, $styles['font'], $styles['paragraph'], true);
+            return $element->addLink(substr((string) $target, 1), $node->textContent, $styles['font'], $styles['paragraph'], true);
         }
 
         return $element->addLink($target, $node->textContent, $styles['font'], $styles['paragraph']);

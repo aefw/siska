@@ -51,7 +51,7 @@ class AddressHelper
 
     protected static function convertSpreadsheetMLFormula(string $formula): string
     {
-        $formula = substr($formula, 3);
+        $formula = substr((string) $formula, 3);
         $temp = explode('"', $formula);
         $key = false;
         foreach ($temp as &$value) {
@@ -73,7 +73,7 @@ class AddressHelper
         int $currentRowNumber = 1,
         int $currentColumnNumber = 1
     ): string {
-        if (substr($formula, 0, 3) == 'of:') {
+        if (substr((string) $formula, 0, 3) == 'of:') {
             // We have an old-style SpreadsheetML Formula
             return self::convertSpreadsheetMLFormula($formula);
         }
@@ -93,7 +93,7 @@ class AddressHelper
                 //        then modify the formula to use that new reference
                 foreach ($cellReferences as $cellReference) {
                     $A1CellReference = self::convertToA1($cellReference[0][0], $currentRowNumber, $currentColumnNumber);
-                    $value = substr_replace($value, $A1CellReference, $cellReference[0][1], strlen($cellReference[0][0]));
+                    $value = substr_replace($value, $A1CellReference, $cellReference[0][1], strlen((string) $cellReference[0][0]));
                 }
             }
         }

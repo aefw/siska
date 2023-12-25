@@ -33,7 +33,7 @@ final class Message
         }
 
         foreach ($message->getHeaders() as $name => $values) {
-            if (strtolower($name) === 'set-cookie') {
+            if (strtolower((string) $name) === 'set-cookie') {
                 foreach ($values as $value) {
                     $msg .= "\r\n{$name}: " . $value;
                 }
@@ -181,7 +181,7 @@ final class Message
     public static function parseRequestUri($path, array $headers)
     {
         $hostKey = array_filter(array_keys($headers), function ($k) {
-            return strtolower($k) === 'host';
+            return strtolower((string) $k) === 'host';
         });
 
         // If no host is found, then a full URI cannot be constructed.
@@ -190,7 +190,7 @@ final class Message
         }
 
         $host = $headers[reset($hostKey)][0];
-        $scheme = substr($host, -4) === ':443' ? 'https' : 'http';
+        $scheme = substr((string) $host, -4) === ':443' ? 'https' : 'http';
 
         return $scheme . '://' . $host . '/' . ltrim((string) $path, '/');
     }

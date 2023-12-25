@@ -54,7 +54,7 @@ class ReferenceHelper
      */
     public static function columnSort($a, $b)
     {
-        return strcasecmp(strlen($a) . $a, strlen($b) . $b);
+        return strcasecmp(strlen((string) $a) . $a, strlen((string) $b) . $b);
     }
 
     /**
@@ -68,7 +68,7 @@ class ReferenceHelper
      */
     public static function columnReverseSort($a, $b)
     {
-        return 1 - strcasecmp(strlen($a) . $a, strlen($b) . $b);
+        return 1 - strcasecmp(strlen((string) $a) . $a, strlen((string) $b) . $b);
     }
 
     /**
@@ -86,7 +86,7 @@ class ReferenceHelper
         [$bc, $br] = sscanf($b, '%[A-Z]%d');
 
         if ($ar === $br) {
-            return strcasecmp(strlen($ac) . $ac, strlen($bc) . $bc);
+            return strcasecmp(strlen((string) $ac) . $ac, strlen((string) $bc) . $bc);
         }
 
         return ($ar < $br) ? -1 : 1;
@@ -107,7 +107,7 @@ class ReferenceHelper
         [$bc, $br] = sscanf($b, '%[A-Z]%d');
 
         if ($ar === $br) {
-            return 1 - strcasecmp(strlen($ac) . $ac, strlen($bc) . $bc);
+            return 1 - strcasecmp(strlen((string) $ac) . $ac, strlen((string) $bc) . $bc);
         }
 
         return ($ar < $br) ? 1 : -1;
@@ -644,8 +644,8 @@ class ReferenceHelper
                     foreach ($matches as $match) {
                         $fromString = ($match[2] > '') ? $match[2] . '!' : '';
                         $fromString .= $match[3] . ':' . $match[4];
-                        $modified3 = substr($this->updateCellReference('$A' . $match[3], $pBefore, $pNumCols, $pNumRows), 2);
-                        $modified4 = substr($this->updateCellReference('$A' . $match[4], $pBefore, $pNumCols, $pNumRows), 2);
+                        $modified3 = substr((string) $this->updateCellReference('$A' . $match[3], $pBefore, $pNumCols, $pNumRows), 2);
+                        $modified4 = substr((string) $this->updateCellReference('$A' . $match[4], $pBefore, $pNumCols, $pNumRows), 2);
 
                         if ($match[3] . ':' . $match[4] !== $modified3 . ':' . $modified4) {
                             if (($match[2] == '') || (trim((string) $match[2], "'") == $sheetName)) {
@@ -669,8 +669,8 @@ class ReferenceHelper
                     foreach ($matches as $match) {
                         $fromString = ($match[2] > '') ? $match[2] . '!' : '';
                         $fromString .= $match[3] . ':' . $match[4];
-                        $modified3 = substr($this->updateCellReference($match[3] . '$1', $pBefore, $pNumCols, $pNumRows), 0, -2);
-                        $modified4 = substr($this->updateCellReference($match[4] . '$1', $pBefore, $pNumCols, $pNumRows), 0, -2);
+                        $modified3 = substr((string) $this->updateCellReference($match[3] . '$1', $pBefore, $pNumCols, $pNumRows), 0, -2);
+                        $modified4 = substr((string) $this->updateCellReference($match[4] . '$1', $pBefore, $pNumCols, $pNumRows), 0, -2);
 
                         if ($match[3] . ':' . $match[4] !== $modified3 . ':' . $modified4) {
                             if (($match[2] == '') || (trim((string) $match[2], "'") == $sheetName)) {

@@ -230,11 +230,11 @@ class DefinedNames
             }
             $newRange = "{$newRange}{$column}{$row}";
 
-            $definedRange = substr($definedRange, 0, $offset) . $newRange . substr($definedRange, $offset + $length);
+            $definedRange = substr((string) $definedRange, 0, $offset) . $newRange . substr((string) $definedRange, $offset + $length);
         }
 
-        if (substr($definedRange, 0, 1) === '=') {
-            $definedRange = substr($definedRange, 1);
+        if (substr((string) $definedRange, 0, 1) === '=') {
+            $definedRange = substr((string) $definedRange, 1);
         }
 
         return $definedRange;

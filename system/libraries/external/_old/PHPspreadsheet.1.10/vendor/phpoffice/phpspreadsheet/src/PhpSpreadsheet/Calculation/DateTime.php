@@ -526,7 +526,7 @@ class DateTime
             } else {
                 return Functions::VALUE();
             }
-            if ($testVal1 < 31 && $testVal2 < 12 && $testVal3 < 12 && strlen($testVal3) == 2) {
+            if ($testVal1 < 31 && $testVal2 < 12 && $testVal3 < 12 && strlen((string) $testVal3) == 2) {
                 $testVal3 += 2000;
             }
             $PHPDateArray = date_parse($testVal1 . '-' . $testVal2 . '-' . $testVal3);
@@ -1447,7 +1447,7 @@ class DateTime
         if (!is_numeric($timeValue)) {
             if (Functions::getCompatibilityMode() == Functions::COMPATIBILITY_GNUMERIC) {
                 $testVal = strtok($timeValue, '/-: ');
-                if (strlen($testVal) < strlen($timeValue)) {
+                if (strlen((string) $testVal) < strlen((string) $timeValue)) {
                     return Functions::VALUE();
                 }
             }
@@ -1488,7 +1488,7 @@ class DateTime
         if (!is_numeric($timeValue)) {
             if (Functions::getCompatibilityMode() == Functions::COMPATIBILITY_GNUMERIC) {
                 $testVal = strtok($timeValue, '/-: ');
-                if (strlen($testVal) < strlen($timeValue)) {
+                if (strlen((string) $testVal) < strlen((string) $timeValue)) {
                     return Functions::VALUE();
                 }
             }
@@ -1529,7 +1529,7 @@ class DateTime
         if (!is_numeric($timeValue)) {
             if (Functions::getCompatibilityMode() == Functions::COMPATIBILITY_GNUMERIC) {
                 $testVal = strtok($timeValue, '/-: ');
-                if (strlen($testVal) < strlen($timeValue)) {
+                if (strlen((string) $testVal) < strlen((string) $timeValue)) {
                     return Functions::VALUE();
                 }
             }

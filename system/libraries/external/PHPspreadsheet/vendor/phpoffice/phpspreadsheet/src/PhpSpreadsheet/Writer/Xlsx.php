@@ -505,7 +505,7 @@ class Xlsx extends BaseWriter
                 $imageContents = null;
                 $imagePath = $this->getDrawingHashTable()->getByIndex($i)->getPath();
                 if (strpos($imagePath, 'zip://') !== false) {
-                    $imagePath = substr($imagePath, 6);
+                    $imagePath = substr((string) $imagePath, 6);
                     $imagePathSplitted = explode('#', $imagePath);
 
                     $imageZip = new ZipArchive();

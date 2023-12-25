@@ -161,7 +161,7 @@ class Functions
                     // Escape any quotes in the string value
                     $condition = preg_replace('/"/ui', '""', $condition);
                 }
-                $condition = Calculation::wrapResult(strtoupper($condition));
+                $condition = Calculation::wrapResult(strtoupper((string) $condition));
             }
 
             return str_replace('""""', '""', '=' . $condition);
@@ -174,7 +174,7 @@ class Functions
             $operand = trim((string) $operand, '"');
         } elseif (!is_numeric($operand) && $operand !== 'FALSE' && $operand !== 'TRUE') {
             $operand = str_replace('"', '""', $operand);
-            $operand = Calculation::wrapResult(strtoupper($operand));
+            $operand = Calculation::wrapResult(strtoupper((string) $operand));
         }
 
         return str_replace('""""', '""', $operator . $operand);
@@ -184,8 +184,8 @@ class Functions
     {
         if (is_numeric($operand) || is_bool($operand)) {
             return $operand;
-        } elseif (strtoupper($operand) === Calculation::getTRUE() || strtoupper($operand) === Calculation::getFALSE()) {
-            return strtoupper($operand);
+        } elseif (strtoupper((string) $operand) === Calculation::getTRUE() || strtoupper((string) $operand) === Calculation::getFALSE()) {
+            return strtoupper((string) $operand);
         }
 
         // Check for percentage
@@ -683,7 +683,7 @@ class Functions
         $worksheet = $cell->getWorksheet();
         $spreadsheet = $worksheet->getParent();
         // Uppercase coordinate
-        $pCoordinatex = strtoupper($coordinate);
+        $pCoordinatex = strtoupper((string) $coordinate);
         // Eliminate leading equal sign
         $pCoordinatex = (string) preg_replace('/^=/', '', $pCoordinatex);
         $defined = $spreadsheet->getDefinedName($pCoordinatex, $worksheet);
@@ -706,7 +706,7 @@ class Functions
     public static function trimSheetFromCellReference(string $coordinate): string
     {
         while (strpos($coordinate, '!') !== false) {
-            $coordinate = substr($coordinate, strpos($coordinate, '!') + 1);
+            $coordinate = substr((string) $coordinate, strpos($coordinate, '!') + 1);
         }
 
         return $coordinate;

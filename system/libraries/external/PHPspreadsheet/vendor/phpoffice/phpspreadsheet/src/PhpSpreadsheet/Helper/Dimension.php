@@ -88,7 +88,7 @@ class Dimension
 
     public function toUnit(string $unitOfMeasure): float
     {
-        $unitOfMeasure = strtolower($unitOfMeasure);
+        $unitOfMeasure = strtolower((string) $unitOfMeasure);
         if (!array_key_exists($unitOfMeasure, self::ABSOLUTE_UNITS)) {
             throw new Exception("{$unitOfMeasure} is not a vaid unit of measure");
         }

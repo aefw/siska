@@ -307,11 +307,11 @@ class SlackRecord
     private function generateAttachmentField(string $title, $value): array
     {
         $value = is_array($value)
-            ? sprintf('```%s```', substr($this->stringify($value), 0, 1990))
+            ? sprintf('```%s```', substr((string) $this->stringify($value), 0, 1990))
             : $value;
 
         return array(
-            'title' => ucfirst($title),
+            'title' => ucfirst((string) $title),
             'value' => $value,
             'short' => false,
         );

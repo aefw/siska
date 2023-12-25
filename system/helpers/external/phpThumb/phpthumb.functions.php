@@ -21,7 +21,7 @@ class phpthumb_functions {
 			if (empty($get_defined_functions)) {
 				$get_defined_functions = get_defined_functions();
 			}
-			return in_array(strtolower($functionname), $get_defined_functions['user']);
+			return in_array(strtolower((string) $functionname), $get_defined_functions['user']);
 		}
 		return function_exists($functionname);
 	}
@@ -33,7 +33,7 @@ class phpthumb_functions {
 			if (empty($get_defined_functions)) {
 				$get_defined_functions = get_defined_functions();
 			}
-			return in_array(strtolower($functionname), $get_defined_functions['internal']);
+			return in_array(strtolower((string) $functionname), $get_defined_functions['internal']);
 		}
 		return function_exists($functionname);
 	}
@@ -222,7 +222,7 @@ class phpthumb_functions {
 	}
 
 	public static function HexCharDisplay($string) {
-		$len = strlen($string);
+		$len = strlen((string) $string);
 		$output = '';
 		for ($i = 0; $i < $len; $i++) {
 			$output .= ' 0x'.str_pad(dechex(ord($string[$i])), 2, '0', STR_PAD_LEFT);
@@ -249,9 +249,9 @@ class phpthumb_functions {
 			die('$gdimg_hexcolorallocate is not a GD resource in ImageHexColorAllocate()');
 		}
 		if (self::IsHexColor($HexColorString)) {
-			$R = hexdec(substr($HexColorString, 0, 2));
-			$G = hexdec(substr($HexColorString, 2, 2));
-			$B = hexdec(substr($HexColorString, 4, 2));
+			$R = hexdec(substr((string) $HexColorString, 0, 2));
+			$G = hexdec(substr((string) $HexColorString, 2, 2));
+			$B = hexdec(substr((string) $HexColorString, 4, 2));
 			return self::ImageColorAllocateAlphaSafe($gdimg_hexcolorallocate, $R, $G, $B, $alpha);
 		}
 		if ($dieOnInvalid) {
@@ -456,7 +456,7 @@ class phpthumb_functions {
 				$DisabledFunctions['set_time_limit'] = 'local';
 			}
 		}
-		return isset($DisabledFunctions[strtolower($function)]);
+		return isset($DisabledFunctions[strtolower((string) $function)]);
 	}
 
 
@@ -537,7 +537,7 @@ class phpthumb_functions {
 				$cache_gd_version[0] = (float) $matches[1];     // e.g. "2.0" (not "bundled (2.0.15 compatible)")
 			} else {
 				$cache_gd_version[1] = $gd_info['GD Version'];                       // e.g. "1.6.2 or higher"
-				$cache_gd_version[0] = (float) substr($gd_info['GD Version'], 0, 3); // e.g. "1.6" (not "1.6.2 or higher")
+				$cache_gd_version[0] = (float) substr((string) $gd_info['GD Version'], 0, 3); // e.g. "1.6" (not "1.6.2 or higher")
 			}
 		}
 		return $cache_gd_version[ (int) $fullstring ];
@@ -596,7 +596,7 @@ class phpthumb_functions {
 			do {
 				$buffer = fread($fp, 8192);
 				$rawData .= $buffer;
-			} while (strlen($buffer) > 0);
+			} while (strlen((string) $buffer) > 0);
 			fclose($fp);
 			return md5($rawData);
 		}
@@ -637,11 +637,11 @@ class phpthumb_functions {
 	}
 
 	public static function CaseInsensitiveInArray($needle, $haystack) {
-		$needle = strtolower($needle);
+		$needle = strtolower((string) $needle);
 		foreach ($haystack as $key => $value) {
 			if (is_array($value)) {
 				// skip?
-			} elseif ($needle == strtolower($value)) {
+			} elseif ($needle == strtolower((string) $value)) {
 				return true;
 			}
 		}
@@ -745,7 +745,7 @@ class phpthumb_functions {
 			'http'  => 80,
 			'https' => 443,
 		);
-		return ((!empty($scheme) && isset($schemePort[strtolower($scheme)])) ? $schemePort[strtolower($scheme)] : null);
+		return ((!empty($scheme) && isset($schemePort[strtolower((string) $scheme)])) ? $schemePort[strtolower((string) $scheme)] : null);
 	}
 
 	public static function ParseURLbetter($url) {
@@ -808,8 +808,8 @@ class phpthumb_functions {
 			curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
 			$rawData = curl_exec($ch);
 			curl_close($ch);
-			if (strlen($rawData) > 0) {
-				$error .= 'CURL succeeded ('.strlen($rawData).' bytes); ';
+			if (strlen((string) $rawData) > 0) {
+				$error .= 'CURL succeeded ('.strlen((string) $rawData).' bytes); ';
 				return $rawData;
 			}
 			$error .= 'CURL available but returned no data; ';
@@ -828,7 +828,7 @@ class phpthumb_functions {
 				do {
 					$buffer = fread($fp, 8192);
 					$rawData .= $buffer;
-				} while (strlen($buffer) > 0);
+				} while (strlen((string) $buffer) > 0);
 				fclose($fp);
 			} else {
 				$error_fopen .= trim(strip_tags(ob_get_contents()));
@@ -836,7 +836,7 @@ class phpthumb_functions {
 			ob_end_clean();
 			$error .= $error_fopen;
 			if (!$error_fopen) {
-				$error .= '; "allow_url_fopen" succeeded ('.strlen($rawData).' bytes); ';
+				$error .= '; "allow_url_fopen" succeeded ('.strlen((string) $rawData).' bytes); ';
 				return $rawData;
 			}
 			$error .= '; "allow_url_fopen" enabled but returned no data ('.$error_fopen.'); ';
@@ -868,13 +868,13 @@ class phpthumb_functions {
 			\\3930K\WEBROOT\trainspotted.com\phpThumb\_cache\\6\6f    // gets multiple directory separators in a row that we want to strip out (being sure not to replace the UNC double-slash at the beginning)
 			*/
 			if ($doubleslash_offset = strpos($dirname, DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR, 1)) {
-				$dirname = substr($dirname, 0, $doubleslash_offset).substr($dirname, $doubleslash_offset + 1);
+				$dirname = substr((string) $dirname, 0, $doubleslash_offset).substr((string) $dirname, $doubleslash_offset + 1);
 			}
 		} while ($doubleslash_offset !== false);
 
 		$open_basedirs = explode($delimiter, $config_open_basedir);
 		foreach ($open_basedirs as $key => $open_basedir) {
-			if (preg_match('#^'.preg_quote($open_basedir).'#'.($case_insensitive_pathname ? 'i' : ''), $dirname) && (strlen($dirname) > strlen($open_basedir))) {
+			if (preg_match('#^'.preg_quote($open_basedir).'#'.($case_insensitive_pathname ? 'i' : ''), $dirname) && (strlen((string) $dirname) > strlen((string) $open_basedir))) {
 				$startoffset = substr_count($open_basedir, DIRECTORY_SEPARATOR) + 1;
 				break;
 			}
@@ -888,7 +888,7 @@ class phpthumb_functions {
 				continue;
 			}
 			if (!@is_dir($test_directory)) {
-				if (substr($test_directory, 0, 2) == '\\\\') {
+				if (substr((string) $test_directory, 0, 2) == '\\\\') {
 					// UNC path
 					if (count(explode('\\', $test_directory)) <= 4) {
 						// 1,2 = UNC starting slashes
@@ -1059,7 +1059,7 @@ if (!function_exists('preg_quote')) {
 		static $preg_quote_array = array();
 		if (empty($preg_quote_array)) {
 			$escapeables = '.\\+*?[^]$(){}=!<>|:';
-			for ($i = 0, $iMax = strlen($escapeables); $i < $iMax; $i++) {
+			for ($i = 0, $iMax = strlen((string) $escapeables); $i < $iMax; $i++) {
 				$strtr_preg_quote[$escapeables[$i]] = $delimiter.$escapeables[$i];
 			}
 		}
@@ -1078,7 +1078,7 @@ if (!function_exists('file_get_contents')) {
 			do {
 				$buffer = fread($fp, 8192);
 				$rawData .= $buffer;
-			} while (strlen($buffer) > 0);
+			} while (strlen((string) $buffer) > 0);
 			fclose($fp);
 			return $rawData;
 		}

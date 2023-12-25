@@ -32,13 +32,13 @@ class HTMLPurifier_AttrDef_CSS extends HTMLPurifier_AttrDef
         // non-delimiting semicolon can appear are in strings
         // escape sequences.   So here is some dumb hack to
         // handle quotes.
-        $len = strlen($css);
+        $len = strlen((string) $css);
         $accum = "";
         $declarations = array();
         $quoted = false;
         for ($i = 0; $i < $len; $i++) {
             $c = strcspn($css, ";'\"", $i);
-            $accum .= substr($css, $i, $c);
+            $accum .= substr((string) $css, $i, $c);
             $i += $c;
             if ($i == $len) break;
             $d = $css[$i];
@@ -87,7 +87,7 @@ class HTMLPurifier_AttrDef_CSS extends HTMLPurifier_AttrDef
                 if (ctype_lower($property)) {
                     break;
                 }
-                $property = strtolower($property);
+                $property = strtolower((string) $property);
                 if (isset($definition->info[$property])) {
                     $ok = true;
                     break;

@@ -54,7 +54,7 @@ class HTMLPurifier_AttrDef_CSS_Font extends HTMLPurifier_AttrDef
         }
 
         // check if it's one of the keywords
-        $lowercase_string = strtolower($string);
+        $lowercase_string = strtolower((string) $string);
         if (isset($system_fonts[$lowercase_string])) {
             return $lowercase_string;
         }

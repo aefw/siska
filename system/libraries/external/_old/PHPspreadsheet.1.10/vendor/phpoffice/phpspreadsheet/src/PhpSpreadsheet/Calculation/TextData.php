@@ -111,8 +111,8 @@ class TextData
         }
 
         $character = $characters;
-        if (mb_strlen($characters, 'UTF-8') > 1) {
-            $character = mb_substr($characters, 0, 1, 'UTF-8');
+        if (mb_strlen((string) $characters, 'UTF-8') > 1) {
+            $character = mb_substr((string) $characters, 0, 1, 'UTF-8');
         }
 
         return self::unicodeToOrd($character);
@@ -305,7 +305,7 @@ class TextData
             $value = ($value) ? Calculation::getTRUE() : Calculation::getFALSE();
         }
 
-        return mb_substr($value, 0, $chars, 'UTF-8');
+        return mb_substr((string) $value, 0, $chars, 'UTF-8');
     }
 
     /**
@@ -335,7 +335,7 @@ class TextData
             return '';
         }
 
-        return mb_substr($value, --$start, $chars, 'UTF-8');
+        return mb_substr((string) $value, --$start, $chars, 'UTF-8');
     }
 
     /**
@@ -359,7 +359,7 @@ class TextData
             $value = ($value) ? Calculation::getTRUE() : Calculation::getFALSE();
         }
 
-        return mb_substr($value, mb_strlen($value, 'UTF-8') - $chars, $chars, 'UTF-8');
+        return mb_substr((string) $value, mb_strlen((string) $value, 'UTF-8') - $chars, $chars, 'UTF-8');
     }
 
     /**
@@ -377,7 +377,7 @@ class TextData
             $value = ($value) ? Calculation::getTRUE() : Calculation::getFALSE();
         }
 
-        return mb_strlen($value, 'UTF-8');
+        return mb_strlen((string) $value, 'UTF-8');
     }
 
     /**
@@ -397,7 +397,7 @@ class TextData
             $mixedCaseString = ($mixedCaseString) ? Calculation::getTRUE() : Calculation::getFALSE();
         }
 
-        return StringHelper::strToLower($mixedCaseString);
+        return StringHelper::strtolower((string) $mixedCaseString);
     }
 
     /**
@@ -417,7 +417,7 @@ class TextData
             $mixedCaseString = ($mixedCaseString) ? Calculation::getTRUE() : Calculation::getFALSE();
         }
 
-        return StringHelper::strToUpper($mixedCaseString);
+        return StringHelper::strtoupper((string) $mixedCaseString);
     }
 
     /**
@@ -494,7 +494,7 @@ class TextData
         }
 
         if ($pos !== false) {
-            return self::REPLACE($text, ++$pos, mb_strlen($fromText, 'UTF-8'), $toText);
+            return self::REPLACE($text, ++$pos, mb_strlen((string) $fromText, 'UTF-8'), $toText);
         }
 
         return $text;
@@ -620,7 +620,7 @@ class TextData
                 return Functions::VALUE();
             }
 
-            $percentageAdjustment = strlen($value) - strlen($percentageString);
+            $percentageAdjustment = strlen((string) $value) - strlen((string) $percentageString);
             if ($percentageAdjustment) {
                 $value = (float) $percentageString;
                 $value /= pow(10, $percentageAdjustment * 2);

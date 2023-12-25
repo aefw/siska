@@ -127,13 +127,13 @@ class MediaFileUpload
     $resumeUri = $this->getResumeUri();
 
     if (false == $chunk) {
-      $chunk = substr($this->data, $this->progress, $this->chunkSize);
+      $chunk = substr((string) $this->data, $this->progress, $this->chunkSize);
     }
 
-    $lastBytePos = $this->progress + strlen($chunk) - 1;
+    $lastBytePos = $this->progress + strlen((string) $chunk) - 1;
     $headers = array(
       'content-range' => "bytes $this->progress-$lastBytePos/$this->size",
-      'content-length' => strlen($chunk),
+      'content-length' => strlen((string) $chunk),
       'expect' => '',
     );
 

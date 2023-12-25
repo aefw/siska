@@ -23,14 +23,14 @@ class PercentageFormatter extends BaseFormatter
         $decimalPartSize = $placeHolders = 0;
         // Number of decimals
         if (preg_match('/\.([?0]+)/u', $format, $matches)) {
-            $decimalPartSize = strlen($matches[1]);
+            $decimalPartSize = strlen((string) $matches[1]);
             $vMinDecimalCount = strlen(rtrim((string) $matches[1], '?'));
             $decimalPartSize = min(max($vMinDecimalCount, $vDecimalCount), $decimalPartSize);
-            $placeHolders = str_repeat(' ', strlen($matches[1]) - $decimalPartSize);
+            $placeHolders = str_repeat(' ', strlen((string) $matches[1]) - $decimalPartSize);
         }
         // Number of digits to display before the decimal
         if (preg_match('/([#0,]+)\./u', $format, $matches)) {
-            $wholePartSize = max($wholePartSize, strlen($matches[1]));
+            $wholePartSize = max($wholePartSize, strlen((string) $matches[1]));
         }
 
         $wholePartSize += $decimalPartSize;

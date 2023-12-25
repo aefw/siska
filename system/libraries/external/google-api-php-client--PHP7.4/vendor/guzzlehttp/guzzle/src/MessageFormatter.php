@@ -168,10 +168,10 @@ class MessageFormatter implements MessageFormatterInterface
                     default:
                         // handle prefixed dynamic headers
                         if (\strpos($matches[1], 'req_header_') === 0) {
-                            $result = $request->getHeaderLine(\substr($matches[1], 11));
+                            $result = $request->getHeaderLine(\substr((string) $matches[1], 11));
                         } elseif (\strpos($matches[1], 'res_header_') === 0) {
                             $result = $response
-                                ? $response->getHeaderLine(\substr($matches[1], 11))
+                                ? $response->getHeaderLine(\substr((string) $matches[1], 11))
                                 : 'NULL';
                         }
                 }

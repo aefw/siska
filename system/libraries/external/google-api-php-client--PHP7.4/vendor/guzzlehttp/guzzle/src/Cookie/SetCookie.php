@@ -323,12 +323,12 @@ class SetCookie
         }
 
         // Match if the last character of the cookie-path is "/"
-        if (\substr($cookiePath, -1, 1) === '/') {
+        if (\substr((string) $cookiePath, -1, 1) === '/') {
             return true;
         }
 
         // Match if the first character not included in cookie path is "/"
-        return \substr($requestPath, \strlen($cookiePath), 1) === '/';
+        return \substr((string) $requestPath, \strlen((string) $cookiePath), 1) === '/';
     }
 
     /**

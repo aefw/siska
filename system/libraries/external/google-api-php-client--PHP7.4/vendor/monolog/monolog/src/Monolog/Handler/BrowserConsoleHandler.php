@@ -176,7 +176,7 @@ class BrowserConsoleHandler extends AbstractProcessingHandler
             $args[] = static::quote(static::handleCustomStyles($match[2][0], $match[1][0]));
 
             $pos = $match[0][1];
-            $format = Utils::substr($format, 0, $pos) . '%c' . $match[1][0] . '%c' . Utils::substr($format, $pos + strlen($match[0][0]));
+            $format = Utils::substr((string) $format, 0, $pos) . '%c' . $match[1][0] . '%c' . Utils::substr((string) $format, $pos + strlen((string) $match[0][0]));
         }
 
         $args[] = static::quote('font-weight: normal');

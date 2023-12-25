@@ -111,11 +111,11 @@ abstract class PKCS1 extends PKCS
     private static function generateSymmetricKey($password, $iv, $length)
     {
         $symkey = '';
-        $iv = substr($iv, 0, 8);
-        while (strlen($symkey) < $length) {
+        $iv = substr((string) $iv, 0, 8);
+        while (strlen((string) $symkey) < $length) {
             $symkey.= md5($symkey . $password . $iv, true);
         }
-        return substr($symkey, 0, $length);
+        return substr((string) $symkey, 0, $length);
     }
 
     /**

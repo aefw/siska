@@ -272,7 +272,7 @@ class HTMLPurifier_UnitConverter
                 // This algorithm partially depends on the standardized
                 // form of numbers that comes out of bcmath.
                 $n = bcadd($n, $neg . '5' . str_repeat('0', $new_log - $sigfigs), 0);
-                $n = substr($n, 0, $sigfigs + strlen($neg)) . str_repeat('0', $new_log - $sigfigs + 1);
+                $n = substr((string) $n, 0, $sigfigs + strlen((string) $neg)) . str_repeat('0', $new_log - $sigfigs + 1);
             }
             return $n;
         } else {
@@ -296,9 +296,9 @@ class HTMLPurifier_UnitConverter
             // look something like 4652999999999.9234. We grab one more digit
             // than we need to precise from $r and then use that to round
             // appropriately.
-            $precise = (string)round(substr($r, 0, strlen($r) + $scale), -1);
+            $precise = (string)round(substr((string) $r, 0, strlen((string) $r) + $scale), -1);
             // Now we return it, truncating the zero that was rounded off.
-            return substr($precise, 0, -1) . str_repeat('0', -$scale + 1);
+            return substr((string) $precise, 0, -1) . str_repeat('0', -$scale + 1);
         }
         return sprintf('%.' . $scale . 'f', (float)$r);
     }

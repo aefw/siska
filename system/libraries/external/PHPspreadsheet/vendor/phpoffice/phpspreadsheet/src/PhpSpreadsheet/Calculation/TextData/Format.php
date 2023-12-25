@@ -268,7 +268,7 @@ class Format
                 return ExcelError::VALUE();
             }
 
-            $percentageAdjustment = strlen($value) - strlen($percentageString);
+            $percentageAdjustment = strlen((string) $value) - strlen((string) $percentageString);
             if ($percentageAdjustment) {
                 $value = (float) $percentageString;
                 $value /= 10 ** ($percentageAdjustment * 2);

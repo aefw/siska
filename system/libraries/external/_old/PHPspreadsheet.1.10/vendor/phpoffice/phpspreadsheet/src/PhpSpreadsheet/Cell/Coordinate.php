@@ -80,7 +80,7 @@ abstract class Coordinate
         if (ctype_digit($pCoordinateString)) {
             return $worksheet . '$' . $pCoordinateString;
         } elseif (ctype_alpha($pCoordinateString)) {
-            return $worksheet . '$' . strtoupper($pCoordinateString);
+            return $worksheet . '$' . strtoupper((string) $pCoordinateString);
         }
 
         return $worksheet . self::absoluteCoordinate($pCoordinateString);
@@ -181,7 +181,7 @@ abstract class Coordinate
         }
 
         // Uppercase coordinate
-        $pRange = strtoupper($pRange);
+        $pRange = strtoupper((string) $pRange);
 
         // Extract range
         if (strpos($pRange, ':') === false) {
@@ -232,7 +232,7 @@ abstract class Coordinate
         }
 
         // Uppercase coordinate
-        $pRange = strtoupper($pRange);
+        $pRange = strtoupper((string) $pRange);
 
         // Extract range
         if (strpos($pRange, ':') === false) {
@@ -498,7 +498,7 @@ abstract class Coordinate
      */
     private static function getCellBlocksFromRangeString($pRange)
     {
-        return explode(' ', str_replace('$', '', strtoupper($pRange)));
+        return explode(' ', str_replace('$', '', strtoupper((string) $pRange)));
     }
 
     /**

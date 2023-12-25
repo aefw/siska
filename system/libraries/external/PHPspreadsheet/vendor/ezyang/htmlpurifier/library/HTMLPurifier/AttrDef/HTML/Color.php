@@ -24,17 +24,17 @@ class HTMLPurifier_AttrDef_HTML_Color extends HTMLPurifier_AttrDef
         if (empty($string)) {
             return false;
         }
-        $lower = strtolower($string);
+        $lower = strtolower((string) $string);
         if (isset($colors[$lower])) {
             return $colors[$lower];
         }
         if ($string[0] === '#') {
-            $hex = substr($string, 1);
+            $hex = substr((string) $string, 1);
         } else {
             $hex = $string;
         }
 
-        $length = strlen($hex);
+        $length = strlen((string) $hex);
         if ($length !== 3 && $length !== 6) {
             return false;
         }

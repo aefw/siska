@@ -251,7 +251,7 @@ class HTMLPurifier_Generator
                 if (strpos($value, '`') !== false) {
                     // check if correct quoting style would not already be
                     // triggered
-                    if (strcspn($value, '"\' <>') === strlen($value)) {
+                    if (strcspn($value, '"\' <>') === strlen((string) $value)) {
                         // protect!
                         $value .= ' ';
                     }

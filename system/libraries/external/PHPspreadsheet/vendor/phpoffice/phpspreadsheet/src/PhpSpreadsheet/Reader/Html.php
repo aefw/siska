@@ -195,7 +195,7 @@ class Html extends BaseReader
 
     private static function containsTags(string $data): bool
     {
-        return strlen($data) !== strlen(strip_tags($data));
+        return strlen((string) $data) !== strlen(strip_tags($data));
     }
 
     /**
@@ -935,7 +935,7 @@ class Html extends BaseReader
     {
         $value = (string) $value;
         if (strpos($value ?? '', '#') === 0) {
-            return substr($value, 1);
+            return substr((string) $value, 1);
         }
 
         return \PhpOffice\PhpSpreadsheet\Helper\Html::colourNameLookup($value);

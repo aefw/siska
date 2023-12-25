@@ -268,8 +268,8 @@ class AutoFilter
      */
     public function shiftColumn($fromColumn, $toColumn)
     {
-        $fromColumn = strtoupper($fromColumn);
-        $toColumn = strtoupper($toColumn);
+        $fromColumn = strtoupper((string) $fromColumn);
+        $toColumn = strtoupper((string) $toColumn);
 
         if (($fromColumn !== null) && (isset($this->columns[$fromColumn])) && ($toColumn !== null)) {
             $this->columns[$fromColumn]->setParent();
@@ -336,7 +336,7 @@ class AutoFilter
             }
             foreach ($dateSet as $dateValue) {
                 //    Use of substr to extract value at the appropriate group level
-                if (substr($dtVal, 0, strlen($dateValue)) == $dateValue) {
+                if (substr((string) $dtVal, 0, strlen((string) $dateValue)) == $dateValue) {
                     return true;
                 }
             }

@@ -60,14 +60,14 @@ spl_autoload_register(function ($class) {
     $baseDir = $customBaseDir ?: __DIR__ . '/';
 
     // does the class use the namespace prefix?
-    $len = strlen($prefix);
+    $len = strlen((string) $prefix);
     if (strncmp($prefix, $class, $len) !== 0) {
         // no, move to the next registered autoloader
         return;
     }
 
     // get the relative class name
-    $relativeClass = substr($class, $len);
+    $relativeClass = substr((string) $class, $len);
 
     // replace the namespace prefix with the base directory, replace namespace
     // separators with directory separators in the relative class name, append

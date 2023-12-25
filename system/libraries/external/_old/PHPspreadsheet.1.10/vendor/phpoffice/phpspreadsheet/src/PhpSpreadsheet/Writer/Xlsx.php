@@ -156,8 +156,8 @@ class Xlsx extends BaseWriter
      */
     public function getWriterPart($pPartName)
     {
-        if ($pPartName != '' && isset($this->writerParts[strtolower($pPartName)])) {
-            return $this->writerParts[strtolower($pPartName)];
+        if ($pPartName != '' && isset($this->writerParts[strtolower((string) $pPartName)])) {
+            return $this->writerParts[strtolower((string) $pPartName)];
         }
 
         return null;
@@ -178,7 +178,7 @@ class Xlsx extends BaseWriter
 
             // If $pFilename is php://output or php://stdout, make it a temporary file...
             $originalFilename = $pFilename;
-            if (strtolower($pFilename) == 'php://output' || strtolower($pFilename) == 'php://stdout') {
+            if (strtolower((string) $pFilename) == 'php://output' || strtolower((string) $pFilename) == 'php://stdout') {
                 $pFilename = @tempnam(File::sysGetTempDir(), 'phpxltmp');
                 if ($pFilename == '') {
                     $pFilename = $originalFilename;
@@ -376,7 +376,7 @@ class Xlsx extends BaseWriter
                     $imageContents = null;
                     $imagePath = $this->getDrawingHashTable()->getByIndex($i)->getPath();
                     if (strpos($imagePath, 'zip://') !== false) {
-                        $imagePath = substr($imagePath, 6);
+                        $imagePath = substr((string) $imagePath, 6);
                         $imagePathSplitted = explode('#', $imagePath);
 
                         $imageZip = new ZipArchive();

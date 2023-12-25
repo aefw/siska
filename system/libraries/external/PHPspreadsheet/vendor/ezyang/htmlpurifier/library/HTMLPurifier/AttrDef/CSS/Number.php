@@ -47,7 +47,7 @@ class HTMLPurifier_AttrDef_CSS_Number extends HTMLPurifier_AttrDef
                 }
                 $sign = '-';
             case '+':
-                $number = substr($number, 1);
+                $number = substr((string) $number, 1);
         }
 
         if (ctype_digit($number)) {
