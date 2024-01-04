@@ -128,7 +128,7 @@ class Column
     {
         $this->setEvaluatedFalse();
         // Uppercase coordinate
-        $column = strtoupper((string) $column);
+        $column = strtoupper($column);
         if ($this->parent !== null) {
             $this->parent->testColumnInRange($column);
         }
@@ -214,7 +214,7 @@ class Column
     {
         $this->setEvaluatedFalse();
         // Lowercase And/Or
-        $join = strtolower((string) $join);
+        $join = strtolower($join);
         if (!in_array($join, self::$ruleJoins)) {
             throw new PhpSpreadsheetException('Invalid rule connection for column AutoFilter.');
         }

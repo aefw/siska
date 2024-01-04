@@ -29,7 +29,7 @@ class CaseConvert
 
         $mixedCaseValue = Helpers::extractString($mixedCaseValue);
 
-        return StringHelper::strtolower((string) $mixedCaseValue);
+        return StringHelper::strToLower($mixedCaseValue);
     }
 
     /**
@@ -52,7 +52,7 @@ class CaseConvert
 
         $mixedCaseValue = Helpers::extractString($mixedCaseValue);
 
-        return StringHelper::strtoupper((string) $mixedCaseValue);
+        return StringHelper::strToUpper($mixedCaseValue);
     }
 
     /**

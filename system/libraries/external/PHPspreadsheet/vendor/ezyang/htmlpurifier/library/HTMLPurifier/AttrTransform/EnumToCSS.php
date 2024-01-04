@@ -50,11 +50,11 @@ class HTMLPurifier_AttrTransform_EnumToCSS extends HTMLPurifier_AttrTransform
             return $attr;
         }
 
-        $value = trim((string) $attr[$this->attr]);
+        $value = trim($attr[$this->attr]);
         unset($attr[$this->attr]);
 
         if (!$this->caseSensitive) {
-            $value = strtolower((string) $value);
+            $value = strtolower($value);
         }
 
         if (!isset($this->enumToCSS[$value])) {

@@ -25,11 +25,11 @@ class Hyperlink
         $linkURL = ($linkURL === null) ? '' : Functions::flattenSingleValue($linkURL);
         $displayName = ($displayName === null) ? '' : Functions::flattenSingleValue($displayName);
 
-        if ((!is_object($cell)) || (trim((string) $linkURL) == '')) {
+        if ((!is_object($cell)) || (trim($linkURL) == '')) {
             return ExcelError::REF();
         }
 
-        if ((is_object($displayName)) || trim((string) $displayName) == '') {
+        if ((is_object($displayName)) || trim($displayName) == '') {
             $displayName = $linkURL;
         }
 

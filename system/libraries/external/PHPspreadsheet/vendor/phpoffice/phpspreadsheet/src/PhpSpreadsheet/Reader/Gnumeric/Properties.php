@@ -26,32 +26,32 @@ class Properties
             $propertyValue = $summaryItem->{'val-string'};
             switch ($propertyName) {
                 case 'title':
-                    $docProps->setTitle(trim((string) $propertyValue));
+                    $docProps->setTitle(trim($propertyValue));
 
                     break;
                 case 'comments':
-                    $docProps->setDescription(trim((string) $propertyValue));
+                    $docProps->setDescription(trim($propertyValue));
 
                     break;
                 case 'keywords':
-                    $docProps->setKeywords(trim((string) $propertyValue));
+                    $docProps->setKeywords(trim($propertyValue));
 
                     break;
                 case 'category':
-                    $docProps->setCategory(trim((string) $propertyValue));
+                    $docProps->setCategory(trim($propertyValue));
 
                     break;
                 case 'manager':
-                    $docProps->setManager(trim((string) $propertyValue));
+                    $docProps->setManager(trim($propertyValue));
 
                     break;
                 case 'author':
-                    $docProps->setCreator(trim((string) $propertyValue));
-                    $docProps->setLastModifiedBy(trim((string) $propertyValue));
+                    $docProps->setCreator(trim($propertyValue));
+                    $docProps->setLastModifiedBy(trim($propertyValue));
 
                     break;
                 case 'company':
-                    $docProps->setCompany(trim((string) $propertyValue));
+                    $docProps->setCompany(trim($propertyValue));
 
                     break;
             }

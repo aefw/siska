@@ -33,6 +33,11 @@ class HTMLPurifier_Printer_ConfigForm extends HTMLPurifier_Printer
     protected $compress = false;
 
     /**
+     * @var HTMLPurifier_Config
+     */
+    protected $genConfig;
+
+    /**
      * @param string $name Form element name for directives to be stuffed into
      * @param string $doc_url String documentation URL, will have fragment tagged on
      * @param bool $compress Integer max length before compressing a directive name, set to false to turn off
@@ -160,10 +165,10 @@ class HTMLPurifier_Printer_ConfigForm extends HTMLPurifier_Printer
             $attr = array('for' => "{$this->name}:$ns.$directive");
 
             // crop directive name if it's too long
-            if (!$this->compress || (strlen((string) $directive) < $this->compress)) {
+            if (!$this->compress || (strlen($directive) < $this->compress)) {
                 $directive_disp = $directive;
             } else {
-                $directive_disp = substr((string) $directive, 0, $this->compress - 2) . '...';
+                $directive_disp = substr($directive, 0, $this->compress - 2) . '...';
                 $attr['title'] = $directive;
             }
 

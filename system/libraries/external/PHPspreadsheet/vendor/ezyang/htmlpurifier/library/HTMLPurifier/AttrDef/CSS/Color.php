@@ -29,18 +29,18 @@ class HTMLPurifier_AttrDef_CSS_Color extends HTMLPurifier_AttrDef
             $colors = $config->get('Core.ColorKeywords');
         }
 
-        $color = trim((string) $color);
+        $color = trim($color);
         if ($color === '') {
             return false;
         }
 
-        $lower = strtolower((string) $color);
+        $lower = strtolower($color);
         if (isset($colors[$lower])) {
             return $colors[$lower];
         }
 
         if (preg_match('#(rgb|rgba|hsl|hsla)\(#', $color, $matches) === 1) {
-            $length = strlen((string) $color);
+            $length = strlen($color);
             if (strpos($color, ')') !== $length - 1) {
                 return false;
             }
@@ -50,7 +50,7 @@ class HTMLPurifier_AttrDef_CSS_Color extends HTMLPurifier_AttrDef
 
             $parameters_size = 3;
             $alpha_channel = false;
-            if (substr((string) $function, -1) === 'a') {
+            if (substr($function, -1) === 'a') {
                 $parameters_size = 4;
                 $alpha_channel = true;
             }
@@ -88,7 +88,7 @@ class HTMLPurifier_AttrDef_CSS_Color extends HTMLPurifier_AttrDef
 
             foreach ($parts as $part) {
                 $i++;
-                $part = trim((string) $part);
+                $part = trim($part);
 
                 if ($part === '') {
                     return false;
@@ -106,7 +106,7 @@ class HTMLPurifier_AttrDef_CSS_Color extends HTMLPurifier_AttrDef
                     continue;
                 }
 
-                if (substr((string) $part, -1) === '%') {
+                if (substr($part, -1) === '%') {
                     $current_type = 'percentage';
                 } else {
                     $current_type = 'integer';
@@ -130,7 +130,7 @@ class HTMLPurifier_AttrDef_CSS_Color extends HTMLPurifier_AttrDef
                     // Return value between range 0 -> $max_value
                     $new_parts[] = (int)max(min($part, $max_value), 0);
                 } elseif ($current_type == 'percentage') {
-                    $new_parts[] = (float)max(min(rtrim((string) $part, '%'), $max_value), 0) . '%';
+                    $new_parts[] = (float)max(min(rtrim($part, '%'), $max_value), 0) . '%';
                 }
             }
 
@@ -140,12 +140,12 @@ class HTMLPurifier_AttrDef_CSS_Color extends HTMLPurifier_AttrDef
         } else {
             // hexadecimal handling
             if ($color[0] === '#') {
-                $hex = substr((string) $color, 1);
+                $hex = substr($color, 1);
             } else {
                 $hex = $color;
                 $color = '#' . $color;
             }
-            $length = strlen((string) $hex);
+            $length = strlen($hex);
             if ($length !== 3 && $length !== 6) {
                 return false;
             }

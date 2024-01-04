@@ -11,14 +11,14 @@
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
  * @see         https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2018 PHPWord contributors
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Writer\Word2007\Element;
 
 /**
- * PreserveText element writer
+ * PreserveText element writer.
  *
  * @since 0.10.0
  */
@@ -27,7 +27,7 @@ class PreserveText extends Text
     /**
      * Write preserve text element.
      */
-    public function write()
+    public function write(): void
     {
         $xmlWriter = $this->getXmlWriter();
         $element = $this->getElement();
@@ -37,14 +37,14 @@ class PreserveText extends Text
 
         $texts = $element->getText();
         if (!is_array($texts)) {
-            $texts = array($texts);
+            $texts = [$texts];
         }
 
         $this->startElementP();
 
         foreach ($texts as $text) {
-            if (substr((string) $text, 0, 1) == '{') {
-                $text = substr((string) $text, 1, -1);
+            if (substr($text, 0, 1) == '{') {
+                $text = substr($text, 1, -1);
 
                 $xmlWriter->startElement('w:r');
                 $xmlWriter->startElement('w:fldChar');

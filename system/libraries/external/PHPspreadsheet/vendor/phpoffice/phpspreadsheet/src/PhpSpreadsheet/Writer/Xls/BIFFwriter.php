@@ -42,7 +42,7 @@ class BIFFwriter
     /**
      * The byte order of this architecture. 0 => little endian, 1 => big endian.
      *
-     * @var int
+     * @var ?int
      */
     private static $byteOrder;
 
@@ -54,7 +54,7 @@ class BIFFwriter
     public $_data;
 
     /**
-     * The size of the data in bytes. Should be the same as strlen((string) $this->_data).
+     * The size of the data in bytes. Should be the same as strlen($this->_data).
      *
      * @var int
      */
@@ -111,11 +111,11 @@ class BIFFwriter
      */
     protected function append($data): void
     {
-        if (strlen((string) $data) - 4 > $this->limit) {
+        if (strlen($data) - 4 > $this->limit) {
             $data = $this->addContinue($data);
         }
         $this->_data .= $data;
-        $this->_datasize += strlen((string) $data);
+        $this->_datasize += strlen($data);
     }
 
     /**
@@ -127,10 +127,10 @@ class BIFFwriter
      */
     public function writeData($data)
     {
-        if (strlen((string) $data) - 4 > $this->limit) {
+        if (strlen($data) - 4 > $this->limit) {
             $data = $this->addContinue($data);
         }
-        $this->_datasize += strlen((string) $data);
+        $this->_datasize += strlen($data);
 
         return $data;
     }
@@ -175,7 +175,7 @@ class BIFFwriter
     /**
      * Writes Excel EOF record to indicate the end of a BIFF stream.
      */
-    public function writeEof()
+    public function writeEof(): string
     {
         $record = 0x000A; // Record identifier
         $length = 0x0000; // Number of bytes to follow
@@ -203,21 +203,21 @@ class BIFFwriter
 
         // The first 2080/8224 bytes remain intact. However, we have to change
         // the length field of the record.
-        $tmp = substr((string) $data, 0, 2) . pack('v', $limit) . substr((string) $data, 4, $limit);
+        $tmp = substr($data, 0, 2) . pack('v', $limit) . substr($data, 4, $limit);
 
         $header = pack('vv', $record, $limit); // Headers for continue records
 
         // Retrieve chunks of 2080/8224 bytes +4 for the header.
-        $data_length = strlen((string) $data);
+        $data_length = strlen($data);
         for ($i = $limit + 4; $i < ($data_length - $limit); $i += $limit) {
             $tmp .= $header;
-            $tmp .= substr((string) $data, $i, $limit);
+            $tmp .= substr($data, $i, $limit);
         }
 
         // Retrieve the last chunk of data
-        $header = pack('vv', $record, strlen((string) $data) - $i);
+        $header = pack('vv', $record, strlen($data) - $i);
         $tmp .= $header;
-        $tmp .= substr((string) $data, $i);
+        $tmp .= substr($data, $i);
 
         return $tmp;
     }

@@ -105,7 +105,7 @@ class Unique
         $caseInsensitiveCounts = array_count_values(
             array_map(
                 function (string $value) {
-                    return StringHelper::strtoupper((string) $value);
+                    return StringHelper::strToUpper($value);
                 },
                 $caseSensitiveLookupValues
             )
@@ -117,7 +117,7 @@ class Unique
                 $caseSensitiveCounts[$caseInsensitiveKey] = $count;
             } else {
                 foreach ($caseSensitiveLookupValues as $caseSensitiveValue) {
-                    if ($caseInsensitiveKey === StringHelper::strtoupper((string) $caseSensitiveValue)) {
+                    if ($caseInsensitiveKey === StringHelper::strToUpper($caseSensitiveValue)) {
                         $caseSensitiveCounts[$caseSensitiveValue] = $count;
 
                         break;

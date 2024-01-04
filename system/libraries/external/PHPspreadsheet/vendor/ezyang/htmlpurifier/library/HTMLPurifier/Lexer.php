@@ -48,6 +48,11 @@ class HTMLPurifier_Lexer
      */
     public $tracksLineNumbers = false;
 
+    /**
+     * @type HTMLPurifier_EntityParser
+     */
+    private $_entity_parser;
+
     // -- STATIC ----------------------------------------------------------
 
     /**
@@ -96,7 +101,7 @@ class HTMLPurifier_Lexer
                         break;
                     }
 
-                    if (class_exists('DOMDocument', false) &&
+                    if (class_exists('DOMDocument') &&
                         method_exists('DOMDocument', 'loadHTML') &&
                         !extension_loaded('domxml')
                     ) {
@@ -195,7 +200,7 @@ class HTMLPurifier_Lexer
 
         // subtracts amps that cannot possibly be escaped
         $num_amp = substr_count($string, '&') - substr_count($string, '& ') -
-            ($string[strlen((string) $string) - 1] === '&' ? 1 : 0);
+            ($string[strlen($string) - 1] === '&' ? 1 : 0);
 
         if (!$num_amp) {
             return $string;
@@ -205,7 +210,7 @@ class HTMLPurifier_Lexer
 
         // code duplication for sake of optimization, see above
         $num_amp_2 = substr_count($string, '&') - substr_count($string, '& ') -
-            ($string[strlen((string) $string) - 1] === '&' ? 1 : 0);
+            ($string[strlen($string) - 1] === '&' ? 1 : 0);
 
         if ($num_amp_2 <= $num_esc_amp) {
             return $string;
@@ -306,8 +311,8 @@ class HTMLPurifier_Lexer
     {
         // normalize newlines to \n
         if ($config->get('Core.NormalizeNewlines')) {
-            $html = str_replace("\r\n", "\n", $html);
-            $html = str_replace("\r", "\n", $html);
+            $html = str_replace("\r\n", "\n", (string)$html);
+            $html = str_replace("\r", "\n", (string)$html);
         }
 
         if ($config->get('HTML.Trusted')) {

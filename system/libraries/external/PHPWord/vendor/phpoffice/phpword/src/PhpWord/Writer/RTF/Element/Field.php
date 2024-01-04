@@ -11,16 +11,18 @@
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
  * @see         https://github.com/PHPOffice/PHPWord
- * @copyright   2019 PHPWord contributors
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Writer\RTF\Element;
 
+use PhpOffice\PhpWord\Element\Field as ElementField;
+
 /**
- * Field element writer
+ * Field element writer.
  *
- * Note: for now, only date, page and numpages fields are implemented for RTF.
+ * Note: for now, only date, page, numpages and filename fields are implemented for RTF.
  */
 class Field extends Text
 {
@@ -30,7 +32,7 @@ class Field extends Text
     public function write()
     {
         $element = $this->element;
-        if (!$element instanceof \PhpOffice\PhpWord\Element\Field) {
+        if (!$element instanceof ElementField) {
             return;
         }
 
@@ -41,7 +43,7 @@ class Field extends Text
         $content .= '{';
         $content .= $this->writeFontStyle();
 
-        $methodName = 'write' . ucfirst(strtolower((string) $element->getType()));
+        $methodName = 'write' . ucfirst(strtolower($element->getType()));
         if (!method_exists($this, $methodName)) {
             // Unsupported field
             $content .= '';
@@ -66,7 +68,18 @@ class Field extends Text
         return 'NUMPAGES';
     }
 
-    protected function writeDate(\PhpOffice\PhpWord\Element\Field $element)
+    protected function writeFilename(ElementField $element): string
+    {
+        $content = 'FILENAME';
+        $options = $element->getOptions();
+        if ($options != null && in_array('Path', $options)) {
+            $content .= ' \\\\p';
+        }
+
+        return $content;
+    }
+
+    protected function writeDate(ElementField $element)
     {
         $content = '';
         $content .= 'DATE';

@@ -22,13 +22,14 @@ class HTMLPurifier_PropertyListIterator extends FilterIterator
     public function __construct(Iterator $iterator, $filter = null)
     {
         parent::__construct($iterator);
-        $this->l = strlen((string) $filter);
+        $this->l = strlen($filter);
         $this->filter = $filter;
     }
 
     /**
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function accept()
     {
         $key = $this->getInnerIterator()->key();

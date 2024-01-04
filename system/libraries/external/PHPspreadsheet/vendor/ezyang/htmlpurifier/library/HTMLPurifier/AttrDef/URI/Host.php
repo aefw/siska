@@ -32,7 +32,7 @@ class HTMLPurifier_AttrDef_URI_Host extends HTMLPurifier_AttrDef
      */
     public function validate($string, $config, $context)
     {
-        $length = strlen((string) $string);
+        $length = strlen($string);
         // empty hostname is OK; it's usually semantically equivalent:
         // the default host as defined by a URI scheme is used:
         //
@@ -44,7 +44,7 @@ class HTMLPurifier_AttrDef_URI_Host extends HTMLPurifier_AttrDef
         }
         if ($length > 1 && $string[0] === '[' && $string[$length - 1] === ']') {
             //IPv6
-            $ip = substr((string) $string, 1, $length - 2);
+            $ip = substr($string, 1, $length - 2);
             $valid = $this->ipv6->validate($ip, $config, $context);
             if ($valid === false) {
                 return false;
@@ -106,7 +106,7 @@ class HTMLPurifier_AttrDef_URI_Host extends HTMLPurifier_AttrDef
         // If we have Net_IDNA2 support, we can support IRIs by
         // punycoding them. (This is the most portable thing to do,
         // since otherwise we have to assume browsers support
-        } elseif ($config->get('Core.EnableIDNA')) {
+        } elseif ($config->get('Core.EnableIDNA') && class_exists('Net_IDNA2')) {
             $idna = new Net_IDNA2(array('encoding' => 'utf8', 'overlong' => false, 'strict' => true));
             // we need to encode each period separately
             $parts = explode('.', $string);
@@ -114,7 +114,7 @@ class HTMLPurifier_AttrDef_URI_Host extends HTMLPurifier_AttrDef
                 $new_parts = array();
                 foreach ($parts as $part) {
                     $encodable = false;
-                    for ($i = 0, $c = strlen((string) $part); $i < $c; $i++) {
+                    for ($i = 0, $c = strlen($part); $i < $c; $i++) {
                         if (ord($part[$i]) > 0x7a) {
                             $encodable = true;
                             break;

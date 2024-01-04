@@ -107,7 +107,7 @@ class DateFormatter
                     self::INTERVAL_MULTIPLIER[$format] * $value,
                     self::INTERVAL_ROUND_PRECISION[$format]
                 );
-                if (strlen((string) $hours) === 1 && in_array($format, self::INTERVAL_LEADING_ZERO, true)) {
+                if (strlen($hours) === 1 && in_array($format, self::INTERVAL_LEADING_ZERO, true)) {
                     $hours = "0$hours";
                 }
                 $block = str_replace($format, $hours, $block);
@@ -129,11 +129,10 @@ class DateFormatter
         //    but we don't want to change any quoted strings
         /** @var callable */
         $callable = [self::class, 'setLowercaseCallback'];
-        $format = preg_replace_callback('/(?:^|")([^"]*)(?:$|")/', $callable, $format);
+        $format = (string) preg_replace_callback('/(?:^|")([^"]*)(?:$|")/', $callable, $format);
 
         // Only process the non-quoted blocks for date format characters
 
-        /** @phpstan-ignore-next-line */
         $blocks = explode('"', $format);
         foreach ($blocks as $key => &$block) {
             if ($key % 2 == 0) {
@@ -173,11 +172,11 @@ class DateFormatter
 
     private static function setLowercaseCallback(array $matches): string
     {
-        return mb_strtolower((string) $matches[0]);
+        return mb_strtolower($matches[0]);
     }
 
     private static function escapeQuotesCallback(array $matches): string
     {
-        return '\\' . implode('\\', str_split($matches[1]));
+        return '\\' . implode('\\', /** @scrutinizer ignore-type */ str_split($matches[1]));
     }
 }

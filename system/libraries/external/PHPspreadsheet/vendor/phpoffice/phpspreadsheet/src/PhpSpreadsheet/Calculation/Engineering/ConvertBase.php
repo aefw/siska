@@ -11,6 +11,7 @@ abstract class ConvertBase
 {
     use ArrayEnabled;
 
+    /** @param mixed $value */
     protected static function validateValue($value): string
     {
         if (is_bool($value)) {
@@ -29,6 +30,7 @@ abstract class ConvertBase
         return strtoupper((string) $value);
     }
 
+    /** @param mixed $places */
     protected static function validatePlaces($places = null): ?int
     {
         if ($places === null) {
@@ -57,13 +59,13 @@ abstract class ConvertBase
     protected static function nbrConversionFormat(string $value, ?int $places): string
     {
         if ($places !== null) {
-            if (strlen((string) $value) <= $places) {
+            if (strlen($value) <= $places) {
                 return substr(str_pad($value, $places, '0', STR_PAD_LEFT), -10);
             }
 
             return ExcelError::NAN();
         }
 
-        return substr((string) $value, -10);
+        return substr($value, -10);
     }
 }

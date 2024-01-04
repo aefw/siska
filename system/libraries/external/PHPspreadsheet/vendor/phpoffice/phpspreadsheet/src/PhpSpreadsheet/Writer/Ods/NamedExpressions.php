@@ -115,7 +115,7 @@ class NamedExpressions
                     }
                 }
             } else {
-                $worksheet = str_replace("''", "'", trim((string) $worksheet, "'"));
+                $worksheet = str_replace("''", "'", trim($worksheet, "'"));
             }
             if (!empty($worksheet)) {
                 $newRange = "'" . str_replace("'", "''", $worksheet) . "'.";
@@ -128,11 +128,11 @@ class NamedExpressions
                 $newRange .= $row;
             }
 
-            $address = substr((string) $address, 0, $offset) . $newRange . substr((string) $address, $offset + $length);
+            $address = substr($address, 0, $offset) . $newRange . substr($address, $offset + $length);
         }
 
-        if (substr((string) $address, 0, 1) === '=') {
-            $address = substr((string) $address, 1);
+        if (substr($address, 0, 1) === '=') {
+            $address = substr($address, 1);
         }
 
         return $address;

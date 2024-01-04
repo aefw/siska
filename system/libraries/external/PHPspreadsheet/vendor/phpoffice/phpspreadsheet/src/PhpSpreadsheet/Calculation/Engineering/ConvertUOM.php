@@ -106,6 +106,7 @@ class ConvertUOM
         'W' => ['Group' => self::CATEGORY_POWER, 'Unit Name' => 'Watt', 'AllowPrefix' => true],
         'w' => ['Group' => self::CATEGORY_POWER, 'Unit Name' => 'Watt', 'AllowPrefix' => true],
         'PS' => ['Group' => self::CATEGORY_POWER, 'Unit Name' => 'Pferdestärke', 'AllowPrefix' => false],
+        // Magnetism
         'T' => ['Group' => self::CATEGORY_MAGNETISM, 'Unit Name' => 'Tesla', 'AllowPrefix' => true],
         'ga' => ['Group' => self::CATEGORY_MAGNETISM, 'Unit Name' => 'Gauss', 'AllowPrefix' => true],
         // Temperature
@@ -563,7 +564,7 @@ class ConvertUOM
         } elseif ($fromUOM === $toUOM) {
             return $value / $toMultiplier;
         } elseif ($fromCategory === self::CATEGORY_TEMPERATURE) {
-            return self::convertTemperature($fromUOM, $toUOM, $value);
+            return self::convertTemperature($fromUOM, $toUOM, /** @scrutinizer ignore-type */ $value);
         }
 
         $baseValue = $value * (1.0 / self::$unitConversions[$fromCategory][$fromUOM]);
@@ -571,7 +572,7 @@ class ConvertUOM
         return ($baseValue * self::$unitConversions[$fromCategory][$toUOM]) / $toMultiplier;
     }
 
-    private static function getUOMDetails(string $uom)
+    private static function getUOMDetails(string $uom): array
     {
         if (isset(self::$conversionUnits[$uom])) {
             $unitCategory = self::$conversionUnits[$uom]['Group'];
@@ -580,8 +581,8 @@ class ConvertUOM
         }
 
         // Check 1-character standard metric multiplier prefixes
-        $multiplierType = substr((string) $uom, 0, 1);
-        $uom = substr((string) $uom, 1);
+        $multiplierType = substr($uom, 0, 1);
+        $uom = substr($uom, 1);
         if (isset(self::$conversionUnits[$uom], self::$conversionMultipliers[$multiplierType])) {
             if (self::$conversionUnits[$uom]['AllowPrefix'] === false) {
                 throw new Exception('Prefix not allowed for UoM');
@@ -591,8 +592,8 @@ class ConvertUOM
             return [$uom, $unitCategory, self::$conversionMultipliers[$multiplierType]['multiplier']];
         }
 
-        $multiplierType .= substr((string) $uom, 0, 1);
-        $uom = substr((string) $uom, 1);
+        $multiplierType .= substr($uom, 0, 1);
+        $uom = substr($uom, 1);
 
         // Check 2-character standard metric multiplier prefixes
         if (isset(self::$conversionUnits[$uom], self::$conversionMultipliers[$multiplierType])) {
@@ -677,7 +678,7 @@ class ConvertUOM
         return $value;
     }
 
-    private static function resolveTemperatureSynonyms(string $uom)
+    private static function resolveTemperatureSynonyms(string $uom): string
     {
         switch ($uom) {
             case 'fah':

@@ -49,7 +49,7 @@ class Value
         $cellValue = Functions::trimTrailingRange($value);
         if (preg_match('/^' . Calculation::CALCULATION_REGEXP_CELLREF . '$/ui', $cellValue) === 1) {
             [$worksheet, $cellValue] = Worksheet::extractSheetTitle($cellValue, true);
-            if (!empty($worksheet) && $cell->getWorksheet()->getParent()->getSheetByName($worksheet) === null) {
+            if (!empty($worksheet) && $cell->getWorksheet()->getParentOrThrow()->getSheetByName($worksheet) === null) {
                 return false;
             }
             [$column, $row] = Coordinate::indexesFromString($cellValue);
@@ -60,7 +60,7 @@ class Value
             return true;
         }
 
-        $namedRange = $cell->getWorksheet()->getParent()->getNamedRange($value);
+        $namedRange = $cell->getWorksheet()->getParentOrThrow()->getNamedRange($value);
 
         return $namedRange instanceof NamedRange;
     }
@@ -224,10 +224,10 @@ class Value
         preg_match('/^' . Calculation::CALCULATION_REGEXP_CELLREF . '$/i', $fullCellReference, $matches);
 
         $fullCellReference = $matches[6] . $matches[7];
-        $worksheetName = str_replace("''", "'", trim((string) $matches[2], "'"));
+        $worksheetName = str_replace("''", "'", trim($matches[2], "'"));
 
         $worksheet = (!empty($worksheetName))
-            ? $cell->getWorksheet()->getParent()->getSheetByName($worksheetName)
+            ? $cell->getWorksheet()->getParentOrThrow()->getSheetByName($worksheetName)
             : $cell->getWorksheet();
 
         return ($worksheet !== null) ? $worksheet->getCell($fullCellReference)->isFormula() : ExcelError::REF();
@@ -240,7 +240,7 @@ class Value
      *
      * @param null|mixed $value The value you want converted
      *
-     * @return number N converts values listed in the following table
+     * @return number|string N converts values listed in the following table
      *        If value is or refers to N returns
      *        A number            That number value
      *        A date              The Excel serialized number of that date
@@ -264,7 +264,7 @@ class Value
                 return (int) $value;
             case 'string':
                 //    Errors
-                if ((strlen((string) $value) > 0) && ($value[0] == '#')) {
+                if ((strlen($value) > 0) && ($value[0] == '#')) {
                     return $value;
                 }
 
@@ -316,7 +316,7 @@ class Value
             return 64;
         } elseif (is_string($value)) {
             //    Errors
-            if ((strlen((string) $value) > 0) && ($value[0] == '#')) {
+            if ((strlen($value) > 0) && ($value[0] == '#')) {
                 return 16;
             }
 

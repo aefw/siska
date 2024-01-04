@@ -366,7 +366,7 @@ class Matrix
      */
     public function __get(string $propertyName)
     {
-        $propertyName = strtolower((string) $propertyName);
+        $propertyName = strtolower($propertyName);
 
         // Test for function calls
         if (in_array($propertyName, self::$getters)) {

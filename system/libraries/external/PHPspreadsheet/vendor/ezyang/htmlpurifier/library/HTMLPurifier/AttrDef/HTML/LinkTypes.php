@@ -54,7 +54,7 @@ class HTMLPurifier_AttrDef_HTML_LinkTypes extends HTMLPurifier_AttrDef
         // lookup to prevent duplicates
         $ret_lookup = array();
         foreach ($parts as $part) {
-            $part = strtolower(trim((string) $part));
+            $part = strtolower(trim($part));
             if (!isset($allowed[$part])) {
                 continue;
             }

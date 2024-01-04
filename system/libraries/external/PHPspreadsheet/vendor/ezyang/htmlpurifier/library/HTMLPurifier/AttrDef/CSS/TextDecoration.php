@@ -22,7 +22,7 @@ class HTMLPurifier_AttrDef_CSS_TextDecoration extends HTMLPurifier_AttrDef
             'underline' => true,
         );
 
-        $string = strtolower((string) $this->parseCDATA($string));
+        $string = strtolower($this->parseCDATA($string));
 
         if ($string === 'none') {
             return $string;
@@ -35,7 +35,7 @@ class HTMLPurifier_AttrDef_CSS_TextDecoration extends HTMLPurifier_AttrDef
                 $final .= $part . ' ';
             }
         }
-        $final = rtrim((string) $final);
+        $final = rtrim($final);
         if ($final === '') {
             return false;
         }

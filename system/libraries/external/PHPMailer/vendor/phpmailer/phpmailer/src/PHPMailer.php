@@ -350,12 +350,19 @@ class PHPMailer
     public $Password = '';
 
     /**
-     * SMTP auth type.
-     * Options are CRAM-MD5, LOGIN, PLAIN, XOAUTH2, attempted in that order if not specified.
+     * SMTP authentication type. Options are CRAM-MD5, LOGIN, PLAIN, XOAUTH2.
+     * If not specified, the first one from that list that the server supports will be selected.
      *
      * @var string
      */
     public $AuthType = '';
+
+    /**
+     * SMTP SMTPXClient command attibutes
+     *
+     * @var array
+     */
+    protected $SMTPXClient = [];
 
     /**
      * An implementation of the PHPMailer OAuthTokenProvider interface.
@@ -750,7 +757,7 @@ class PHPMailer
      *
      * @var string
      */
-    const VERSION = '6.6.3';
+    const VERSION = '6.9.1';
 
     /**
      * Error severity: message only, continue processing.
@@ -795,7 +802,7 @@ class PHPMailer
      * The maximum line length supported by mail().
      *
      * Background: mail() will sometimes corrupt messages
-     * with headers headers longer than 65 chars, see #818.
+     * with headers longer than 65 chars, see #818.
      *
      * @var int
      */
@@ -858,7 +865,7 @@ class PHPMailer
     private function mailPassthru($to, $subject, $body, $header, $params)
     {
         //Check overloading of mail function to avoid double-encoding
-        if (ini_get('mbstring.func_overload') & 1) {
+        if ((int)ini_get('mbstring.func_overload') & 1) {
             $subject = $this->secureHeader($subject);
         } else {
             $subject = $this->encodeHeader($this->secureHeader($subject));
@@ -932,7 +939,7 @@ class PHPMailer
                     str_replace(
                         "\n",
                         "\n                   \t                  ",
-                        trim((string) $str)
+                        trim($str)
                     )
                 ),
                 "\n";
@@ -1077,7 +1084,7 @@ class PHPMailer
     {
         $pos = false;
         if ($address !== null) {
-            $address = trim((string) $address);
+            $address = trim($address);
             $pos = strrpos($address, '@');
         }
         if (false === $pos) {
@@ -1096,7 +1103,7 @@ class PHPMailer
 
             return false;
         }
-        if ($name !== null) {
+        if ($name !== null && is_string($name)) {
             $name = trim(preg_replace('/[\r\n]+/', '', $name)); //Strip breaks and trim
         } else {
             $name = '';
@@ -1104,7 +1111,7 @@ class PHPMailer
         $params = [$kind, $address, $name];
         //Enqueue addresses with IDN until we know the PHPMailer::$CharSet.
         //Domain is assumed to be whatever is after the last @ symbol in the address
-        if (static::idnSupported() && $this->has8bitChars(substr((string) $address, ++$pos))) {
+        if (static::idnSupported() && $this->has8bitChars(substr($address, ++$pos))) {
             if ('Reply-To' !== $kind) {
                 if (!array_key_exists($address, $this->RecipientsQueue)) {
                     $this->RecipientsQueue[$address] = $params;
@@ -1122,6 +1129,22 @@ class PHPMailer
 
         //Immediately add standard addresses without IDN.
         return call_user_func_array([$this, 'addAnAddress'], $params);
+    }
+
+    /**
+     * Set the boundaries to use for delimiting MIME parts.
+     * If you override this, ensure you set all 3 boundaries to unique values.
+     * The default boundaries include a "=_" sequence which cannot occur in quoted-printable bodies,
+     * as suggested by https://www.rfc-editor.org/rfc/rfc2045#section-6.7
+     *
+     * @return void
+     */
+    public function setBoundaries()
+    {
+        $this->uniqueid = $this->generateId();
+        $this->boundary[1] = 'b1=_' . $this->uniqueid;
+        $this->boundary[2] = 'b2=_' . $this->uniqueid;
+        $this->boundary[3] = 'b3=_' . $this->uniqueid;
     }
 
     /**
@@ -1168,14 +1191,14 @@ class PHPMailer
             return false;
         }
         if ('Reply-To' !== $kind) {
-            if (!array_key_exists(strtolower((string) $address), $this->all_recipients)) {
+            if (!array_key_exists(strtolower($address), $this->all_recipients)) {
                 $this->{$kind}[] = [$address, $name];
-                $this->all_recipients[strtolower((string) $address)] = true;
+                $this->all_recipients[strtolower($address)] = true;
 
                 return true;
             }
-        } elseif (!array_key_exists(strtolower((string) $address), $this->ReplyTo)) {
-            $this->ReplyTo[strtolower((string) $address)] = [$address, $name];
+        } elseif (!array_key_exists(strtolower($address), $this->ReplyTo)) {
+            $this->ReplyTo[strtolower($address)] = [$address, $name];
 
             return true;
         }
@@ -1236,7 +1259,7 @@ class PHPMailer
             //Use this simpler parser
             $list = explode(',', $addrstr);
             foreach ($list as $address) {
-                $address = trim((string) $address);
+                $address = trim($address);
                 //Is there a separate name part?
                 if (strpos($address, '<') === false) {
                     //No separate name, just use the whole thing
@@ -1249,7 +1272,7 @@ class PHPMailer
                 } else {
                     list($name, $email) = explode('<', $address);
                     $email = trim(str_replace('>', '', $email));
-                    $name = trim((string) $name);
+                    $name = trim($name);
                     if (static::validateAddress($email)) {
                         //Check for a Mbstring constant rather than using extension_loaded, which is sometimes disabled
                         //If this name is encoded, decode it
@@ -1264,7 +1287,7 @@ class PHPMailer
                         }
                         $addresses[] = [
                             //Remove any surrounding quotes and spaces from the name
-                            'name' => trim((string) $name, '\'" '),
+                            'name' => trim($name, '\'" '),
                             'address' => $email,
                         ];
                     }
@@ -1288,13 +1311,13 @@ class PHPMailer
      */
     public function setFrom($address, $name = '', $auto = true)
     {
-        $address = trim((string) $address);
+        $address = trim((string)$address);
         $name = trim(preg_replace('/[\r\n]+/', '', $name)); //Strip breaks and trim
         //Don't validate now addresses with IDN. Will be done in send().
         $pos = strrpos($address, '@');
         if (
             (false === $pos)
-            || ((!$this->has8bitChars(substr((string) $address, ++$pos)) || !static::idnSupported())
+            || ((!$this->has8bitChars(substr($address, ++$pos)) || !static::idnSupported())
             && !static::validateAddress($address))
         ) {
             $error_message = sprintf(
@@ -1451,7 +1474,7 @@ class PHPMailer
             false !== $pos &&
             static::idnSupported()
         ) {
-            $domain = substr((string) $address, ++$pos);
+            $domain = substr($address, ++$pos);
             //Verify CharSet string is a valid one, and domain properly encoded in this CharSet.
             if ($this->has8bitChars($domain) && @mb_check_encoding($domain, $this->CharSet)) {
                 //Convert the domain from whatever charset it's in to UTF-8
@@ -1474,7 +1497,7 @@ class PHPMailer
                     $punycode = idn_to_ascii($domain, $errorcode);
                 }
                 if (false !== $punycode) {
-                    return substr((string) $address, 0, $pos) . $punycode;
+                    return substr($address, 0, $pos) . $punycode;
                 }
             }
         }
@@ -1555,7 +1578,11 @@ class PHPMailer
 
             //Validate From, Sender, and ConfirmReadingTo addresses
             foreach (['From', 'Sender', 'ConfirmReadingTo'] as $address_kind) {
-                $this->{$address_kind} = trim((string) $this->{$address_kind});
+                if ($this->{$address_kind} === null) {
+                    $this->{$address_kind} = '';
+                    continue;
+                }
+                $this->{$address_kind} = trim($this->{$address_kind});
                 if (empty($this->{$address_kind})) {
                     continue;
                 }
@@ -1589,7 +1616,7 @@ class PHPMailer
             }
 
             //Trim subject consistently
-            $this->Subject = trim((string) $this->Subject);
+            $this->Subject = trim($this->Subject);
             //Create body before headers in case body makes changes to headers (e.g. altering transfer encoding)
             $this->MIMEHeader = '';
             $this->MIMEBody = $this->createBody();
@@ -1671,11 +1698,11 @@ class PHPMailer
                     return $this->mailSend($this->MIMEHeader, $this->MIMEBody);
             }
         } catch (Exception $exc) {
-            if ($this->Mailer === 'smtp' && $this->SMTPKeepAlive == true) {
-                $this->smtp->reset();
-            }
             $this->setError($exc->getMessage());
             $this->edebug($exc->getMessage());
+            if ($this->Mailer === 'smtp' && $this->SMTPKeepAlive == true && $this->smtp->connected()) {
+                $this->smtp->reset();
+            }
             if ($this->exceptions) {
                 throw $exc;
             }
@@ -1820,7 +1847,7 @@ class PHPMailer
             return false;
         }
 
-        $length = strlen((string) $string);
+        $length = strlen($string);
 
         for ($i = 0; $i < $length; ++$i) {
             $c = $string[$i];
@@ -1863,7 +1890,7 @@ class PHPMailer
         if (!static::isPermittedPath($path)) {
             return false;
         }
-        $readable = file_exists($path);
+        $readable = is_file($path);
         //If not a UNC path (expected to start with \\), check read permission, see #2069
         if (strpos($path, '\\\\') !== 0) {
             $readable = $readable && is_readable($path);
@@ -1891,7 +1918,14 @@ class PHPMailer
         foreach ($this->to as $toaddr) {
             $toArr[] = $this->addrFormat($toaddr);
         }
-        $to = implode(', ', $toArr);
+        $to = trim(implode(', ', $toArr));
+
+        //If there are no To-addresses (e.g. when sending only to BCC-addresses)
+        //the following should be added to get a correct DKIM-signature.
+        //Compare with $this->preSend()
+        if ($to === '') {
+            $to = 'undisclosed-recipients:;';
+        }
 
         $params = null;
         //This sets the SMTP envelope sender which gets turned into a return-path header by the receiver
@@ -1975,6 +2009,38 @@ class PHPMailer
     }
 
     /**
+     * Provide SMTP XCLIENT attributes
+     *
+     * @param string $name  Attribute name
+     * @param ?string $value Attribute value
+     *
+     * @return bool
+     */
+    public function setSMTPXclientAttribute($name, $value)
+    {
+        if (!in_array($name, SMTP::$xclient_allowed_attributes)) {
+            return false;
+        }
+        if (isset($this->SMTPXClient[$name]) && $value === null) {
+            unset($this->SMTPXClient[$name]);
+        } elseif ($value !== null) {
+            $this->SMTPXClient[$name] = $value;
+        }
+
+        return true;
+    }
+
+    /**
+     * Get SMTP XCLIENT attributes
+     *
+     * @return array
+     */
+    public function getSMTPXclientAttributes()
+    {
+        return $this->SMTPXClient;
+    }
+
+    /**
      * Send mail via SMTP.
      * Returns false if there is a bad MAIL FROM, RCPT, or DATA input.
      *
@@ -2001,6 +2067,9 @@ class PHPMailer
             $smtp_from = $this->From;
         } else {
             $smtp_from = $this->Sender;
+        }
+        if (count($this->SMTPXClient)) {
+            $this->smtp->xclient($this->SMTPXClient);
         }
         if (!$this->smtp->mail($smtp_from)) {
             $this->setError($this->lang('from_failed') . $smtp_from . ' : ' . implode(',', $this->smtp->getError()));
@@ -2094,6 +2163,9 @@ class PHPMailer
         $this->smtp->setDebugLevel($this->SMTPDebug);
         $this->smtp->setDebugOutput($this->Debugoutput);
         $this->smtp->setVerp($this->do_verp);
+        if ($this->Host === null) {
+            $this->Host = 'localhost';
+        }
         $hosts = explode(';', $this->Host);
         $lastexception = null;
 
@@ -2102,11 +2174,11 @@ class PHPMailer
             if (
                 !preg_match(
                     '/^(?:(ssl|tls):\/\/)?(.+?)(?::(\d+))?$/',
-                    trim((string) $hostentry),
+                    trim($hostentry),
                     $hostinfo
                 )
             ) {
-                $this->edebug($this->lang('invalid_hostentry') . ' ' . trim((string) $hostentry));
+                $this->edebug($this->lang('invalid_hostentry') . ' ' . trim($hostentry));
                 //Not a valid host entry
                 continue;
             }
@@ -2161,10 +2233,17 @@ class PHPMailer
                     $this->smtp->hello($hello);
                     //Automatically enable TLS encryption if:
                     //* it's not disabled
+                    //* we are not connecting to localhost
                     //* we have openssl extension
                     //* we are not already using SSL
                     //* the server offers STARTTLS
-                    if ($this->SMTPAutoTLS && $sslext && 'ssl' !== $secure && $this->smtp->getServerExt('STARTTLS')) {
+                    if (
+                        $this->SMTPAutoTLS &&
+                        $this->Host !== 'localhost' &&
+                        $sslext &&
+                        $secure !== 'ssl' &&
+                        $this->smtp->getServerExt('STARTTLS')
+                    ) {
                         $tls = true;
                     }
                     if ($tls) {
@@ -2289,7 +2368,7 @@ class PHPMailer
 
         //Validate $langcode
         $foundlang = true;
-        $langcode  = strtolower((string) $langcode);
+        $langcode  = strtolower($langcode);
         if (
             !preg_match('/^(?P<lang>[a-z]{2})(?P<script>_[a-z]{4})?(?P<country>_[a-z]{2})?$/', $langcode, $matches)
             && $langcode !== 'en'
@@ -2397,7 +2476,7 @@ class PHPMailer
      */
     public function addrFormat($addr)
     {
-        if (empty($addr[1])) { //No name provided
+        if (!isset($addr[1]) || ($addr[1] === '')) { //No name provided
             return $this->secureHeader($addr[0]);
         }
 
@@ -2426,14 +2505,14 @@ class PHPMailer
         }
         //If utf-8 encoding is used, we will need to make sure we don't
         //split multibyte characters when we wrap
-        $is_utf8 = static::CHARSET_UTF8 === strtolower((string) $this->CharSet);
+        $is_utf8 = static::CHARSET_UTF8 === strtolower($this->CharSet);
         $lelen = strlen(static::$LE);
         $crlflen = strlen(static::$LE);
 
         $message = static::normalizeBreaks($message);
         //Remove a trailing line break
-        if (substr((string) $message, -$lelen) === static::$LE) {
-            $message = substr((string) $message, 0, -$lelen);
+        if (substr($message, -$lelen) === static::$LE) {
+            $message = substr($message, 0, -$lelen);
         }
 
         //Split message into lines
@@ -2445,20 +2524,20 @@ class PHPMailer
             $buf = '';
             $firstword = true;
             foreach ($words as $word) {
-                if ($qp_mode && (strlen((string) $word) > $length)) {
-                    $space_left = $length - strlen((string) $buf) - $crlflen;
+                if ($qp_mode && (strlen($word) > $length)) {
+                    $space_left = $length - strlen($buf) - $crlflen;
                     if (!$firstword) {
                         if ($space_left > 20) {
                             $len = $space_left;
                             if ($is_utf8) {
                                 $len = $this->utf8CharBoundary($word, $len);
-                            } elseif ('=' === substr((string) $word, $len - 1, 1)) {
+                            } elseif ('=' === substr($word, $len - 1, 1)) {
                                 --$len;
-                            } elseif ('=' === substr((string) $word, $len - 2, 1)) {
+                            } elseif ('=' === substr($word, $len - 2, 1)) {
                                 $len -= 2;
                             }
-                            $part = substr((string) $word, 0, $len);
-                            $word = substr((string) $word, $len);
+                            $part = substr($word, 0, $len);
+                            $word = substr($word, $len);
                             $buf .= ' ' . $part;
                             $message .= $buf . sprintf('=%s', static::$LE);
                         } else {
@@ -2473,13 +2552,13 @@ class PHPMailer
                         $len = $length;
                         if ($is_utf8) {
                             $len = $this->utf8CharBoundary($word, $len);
-                        } elseif ('=' === substr((string) $word, $len - 1, 1)) {
+                        } elseif ('=' === substr($word, $len - 1, 1)) {
                             --$len;
-                        } elseif ('=' === substr((string) $word, $len - 2, 1)) {
+                        } elseif ('=' === substr($word, $len - 2, 1)) {
                             $len -= 2;
                         }
-                        $part = substr((string) $word, 0, $len);
-                        $word = (string) substr((string) $word, $len);
+                        $part = substr($word, 0, $len);
+                        $word = (string) substr($word, $len);
 
                         if ($word !== '') {
                             $message .= $part . sprintf('=%s', static::$LE);
@@ -2494,7 +2573,7 @@ class PHPMailer
                     }
                     $buf .= $word;
 
-                    if ('' !== $buf_o && strlen((string) $buf) > $length) {
+                    if ('' !== $buf_o && strlen($buf) > $length) {
                         $message .= $buf_o . $soft_break;
                         $buf = $word;
                     }
@@ -2522,12 +2601,12 @@ class PHPMailer
         $foundSplitPos = false;
         $lookBack = 3;
         while (!$foundSplitPos) {
-            $lastChunk = substr((string) $encodedText, $maxLength - $lookBack, $lookBack);
+            $lastChunk = substr($encodedText, $maxLength - $lookBack, $lookBack);
             $encodedCharPos = strpos($lastChunk, '=');
             if (false !== $encodedCharPos) {
                 //Found start of encoded character byte within $lookBack block.
                 //Check the encoded byte value (the 2 chars after the '=')
-                $hex = substr((string) $encodedText, $maxLength - $lookBack + $encodedCharPos + 1, 2);
+                $hex = substr($encodedText, $maxLength - $lookBack + $encodedCharPos + 1, 2);
                 $dec = hexdec($hex);
                 if ($dec < 128) {
                     //Single byte character.
@@ -2603,7 +2682,7 @@ class PHPMailer
                 $result .= $this->headerLine('To', 'undisclosed-recipients:;');
             }
         }
-        $result .= $this->addrAppend('From', [[trim((string) $this->From), $this->FromName]]);
+        $result .= $this->addrAppend('From', [[trim($this->From), $this->FromName]]);
 
         //sendmail and mail() extract Cc from the header before sending
         if (count($this->cc) > 0) {
@@ -2656,9 +2735,9 @@ class PHPMailer
                 'X-Mailer',
                 'PHPMailer ' . self::VERSION . ' (https://github.com/PHPMailer/PHPMailer)'
             );
-        } elseif (is_string($this->XMailer) && trim((string) $this->XMailer) !== '') {
+        } elseif (is_string($this->XMailer) && trim($this->XMailer) !== '') {
             //Some string
-            $result .= $this->headerLine('X-Mailer', trim((string) $this->XMailer));
+            $result .= $this->headerLine('X-Mailer', trim($this->XMailer));
         } //Other values result in no X-Mailer header
 
         if ('' !== $this->ConfirmReadingTo) {
@@ -2668,8 +2747,8 @@ class PHPMailer
         //Add custom headers
         foreach ($this->CustomHeader as $header) {
             $result .= $this->headerLine(
-                trim((string) $header[0]),
-                $this->encodeHeader(trim((string) $header[1]))
+                trim($header[0]),
+                $this->encodeHeader(trim($header[1]))
             );
         }
         if (!$this->sign_key_file) {
@@ -2784,10 +2863,7 @@ class PHPMailer
     {
         $body = '';
         //Create unique IDs and preset boundaries
-        $this->uniqueid = $this->generateId();
-        $this->boundary[1] = 'b1_' . $this->uniqueid;
-        $this->boundary[2] = 'b2_' . $this->uniqueid;
-        $this->boundary[3] = 'b3_' . $this->uniqueid;
+        $this->setBoundaries();
 
         if ($this->sign_key_file) {
             $body .= $this->getMailMIME() . static::$LE;
@@ -2823,7 +2899,7 @@ class PHPMailer
             $altBodyEncoding = static::ENCODING_QUOTED_PRINTABLE;
         }
         //Use this as a preamble in all multipart message types
-        $mimepre = 'This is a multi-part message in MIME format.' . static::$LE . static::$LE;
+        $mimepre = '';
         switch ($this->message_type) {
             case 'inline':
                 $body .= $mimepre;
@@ -3057,6 +3133,18 @@ class PHPMailer
         }
 
         return $body;
+    }
+
+    /**
+     * Get the boundaries that this message will use
+     * @return array
+     */
+    public function getBoundaries()
+    {
+        if (empty($this->boundary)) {
+            $this->setBoundaries();
+        }
+        return $this->boundary;
     }
 
     /**
@@ -3387,7 +3475,7 @@ class PHPMailer
     public function encodeString($str, $encoding = self::ENCODING_BASE64)
     {
         $encoded = '';
-        switch (strtolower((string) $encoding)) {
+        switch (strtolower($encoding)) {
             case static::ENCODING_BASE64:
                 $encoded = chunk_split(
                     base64_encode($str),
@@ -3399,7 +3487,7 @@ class PHPMailer
             case static::ENCODING_8BIT:
                 $encoded = static::normalizeBreaks($str);
                 //Make sure it ends with a line break
-                if (substr((string) $encoded, -(strlen(static::$LE))) !== static::$LE) {
+                if (substr($encoded, -(strlen(static::$LE))) !== static::$LE) {
                     $encoded .= static::$LE;
                 }
                 break;
@@ -3433,7 +3521,7 @@ class PHPMailer
     public function encodeHeader($str, $position = 'text')
     {
         $matchcount = 0;
-        switch (strtolower((string) $position)) {
+        switch (strtolower($position)) {
             case 'phrase':
                 if (!preg_match('/[\200-\377]/', $str)) {
                     //Can't use addslashes as we don't know the value of magic_quotes_sybase
@@ -3463,7 +3551,7 @@ class PHPMailer
         }
 
         //Q/B encoding adds 8 chars and the charset ("` =?<charset>?[QB]?<content>?=`").
-        $overhead = 8 + strlen((string) $charset);
+        $overhead = 8 + strlen($charset);
 
         if ('mail' === $this->Mailer) {
             $maxlen = static::MAIL_MAX_LINE_LENGTH - $overhead;
@@ -3472,13 +3560,13 @@ class PHPMailer
         }
 
         //Select the encoding that produces the shortest output and/or prevents corruption.
-        if ($matchcount > strlen((string) $str) / 3) {
+        if ($matchcount > strlen($str) / 3) {
             //More than 1/3 of the content needs encoding, use B-encode.
             $encoding = 'B';
         } elseif ($matchcount > 0) {
             //Less than 1/3 of the content needs encoding, use Q-encode.
             $encoding = 'Q';
-        } elseif (strlen((string) $str) > $maxlen) {
+        } elseif (strlen($str) > $maxlen) {
             //No encoding needed, but value exceeds max line length, use Q-encode to prevent corruption.
             $encoding = 'Q';
         } else {
@@ -3502,7 +3590,7 @@ class PHPMailer
             case 'Q':
                 $encoded = $this->encodeQ($str, $position);
                 $encoded = $this->wrapText($encoded, $maxlen, true);
-                $encoded = str_replace('=' . static::$LE, "\n", trim((string) $encoded));
+                $encoded = str_replace('=' . static::$LE, "\n", trim($encoded));
                 $encoded = preg_replace('/^(.*)$/m', ' =?' . $charset . "?$encoding?\\1?=", $encoded);
                 break;
             default:
@@ -3522,7 +3610,7 @@ class PHPMailer
     public function hasMultiBytes($str)
     {
         if (function_exists('mb_strlen')) {
-            return strlen((string) $str) > mb_strlen((string) $str, $this->CharSet);
+            return strlen($str) > mb_strlen($str, $this->CharSet);
         }
 
         //Assume no multibytes (we can't handle without mbstring functions anyway)
@@ -3562,11 +3650,11 @@ class PHPMailer
             $linebreak = static::$LE;
         }
 
-        $mb_length = mb_strlen((string) $str, $this->CharSet);
+        $mb_length = mb_strlen($str, $this->CharSet);
         //Each line must have length <= 75, including $start and $end
-        $length = 75 - strlen((string) $start) - strlen((string) $end);
+        $length = 75 - strlen($start) - strlen($end);
         //Average multi-byte ratio
-        $ratio = $mb_length / strlen((string) $str);
+        $ratio = $mb_length / strlen($str);
         //Base64 has a 4:3 ratio
         $avgLength = floor($length * $ratio * .75);
 
@@ -3575,15 +3663,15 @@ class PHPMailer
             $lookBack = 0;
             do {
                 $offset = $avgLength - $lookBack;
-                $chunk = mb_substr((string) $str, $i, $offset, $this->CharSet);
+                $chunk = mb_substr($str, $i, $offset, $this->CharSet);
                 $chunk = base64_encode($chunk);
                 ++$lookBack;
-            } while (strlen((string) $chunk) > $length);
+            } while (strlen($chunk) > $length);
             $encoded .= $chunk . $linebreak;
         }
 
         //Chomp the last linefeed
-        return substr((string) $encoded, 0, -strlen((string) $linebreak));
+        return substr($encoded, 0, -strlen($linebreak));
     }
 
     /**
@@ -3614,7 +3702,7 @@ class PHPMailer
         //There should not be any EOL in the string
         $pattern = '';
         $encoded = str_replace(["\r", "\n"], '', $str);
-        switch (strtolower((string) $position)) {
+        switch (strtolower($position)) {
             case 'phrase':
                 //RFC 2047 section 5.3
                 $pattern = '^A-Za-z0-9!*+\/ -';
@@ -3945,7 +4033,7 @@ class PHPMailer
     public function clearAddresses()
     {
         foreach ($this->to as $to) {
-            unset($this->all_recipients[strtolower((string) $to[0])]);
+            unset($this->all_recipients[strtolower($to[0])]);
         }
         $this->to = [];
         $this->clearQueuedAddresses('to');
@@ -3957,7 +4045,7 @@ class PHPMailer
     public function clearCCs()
     {
         foreach ($this->cc as $cc) {
-            unset($this->all_recipients[strtolower((string) $cc[0])]);
+            unset($this->all_recipients[strtolower($cc[0])]);
         }
         $this->cc = [];
         $this->clearQueuedAddresses('cc');
@@ -3969,7 +4057,7 @@ class PHPMailer
     public function clearBCCs()
     {
         foreach ($this->bcc as $bcc) {
-            unset($this->all_recipients[strtolower((string) $bcc[0])]);
+            unset($this->all_recipients[strtolower($bcc[0])]);
         }
         $this->bcc = [];
         $this->clearQueuedAddresses('bcc');
@@ -4010,6 +4098,79 @@ class PHPMailer
     public function clearCustomHeaders()
     {
         $this->CustomHeader = [];
+    }
+
+    /**
+     * Clear a specific custom header by name or name and value.
+     * $name value can be overloaded to contain
+     * both header name and value (name:value).
+     *
+     * @param string      $name  Custom header name
+     * @param string|null $value Header value
+     *
+     * @return bool True if a header was replaced successfully
+     */
+    public function clearCustomHeader($name, $value = null)
+    {
+        if (null === $value && strpos($name, ':') !== false) {
+            //Value passed in as name:value
+            list($name, $value) = explode(':', $name, 2);
+        }
+        $name = trim($name);
+        $value = (null === $value) ? null : trim($value);
+
+        foreach ($this->CustomHeader as $k => $pair) {
+            if ($pair[0] == $name) {
+                // We remove the header if the value is not provided or it matches.
+                if (null === $value ||  $pair[1] == $value) {
+                    unset($this->CustomHeader[$k]);
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Replace a custom header.
+     * $name value can be overloaded to contain
+     * both header name and value (name:value).
+     *
+     * @param string      $name  Custom header name
+     * @param string|null $value Header value
+     *
+     * @return bool True if a header was replaced successfully
+     * @throws Exception
+     */
+    public function replaceCustomHeader($name, $value = null)
+    {
+        if (null === $value && strpos($name, ':') !== false) {
+            //Value passed in as name:value
+            list($name, $value) = explode(':', $name, 2);
+        }
+        $name = trim($name);
+        $value = (null === $value) ? '' : trim($value);
+
+        $replaced = false;
+        foreach ($this->CustomHeader as $k => $pair) {
+            if ($pair[0] == $name) {
+                if ($replaced) {
+                    unset($this->CustomHeader[$k]);
+                    continue;
+                }
+                if (strpbrk($name . $value, "\r\n") !== false) {
+                    if ($this->exceptions) {
+                        throw new Exception($this->lang('invalid_header'));
+                    }
+
+                    return false;
+                }
+                $this->CustomHeader[$k] = [$name, $value];
+                $replaced = true;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -4091,14 +4252,14 @@ class PHPMailer
         if (
             empty($host)
             || !is_string($host)
-            || strlen((string) $host) > 256
+            || strlen($host) > 256
             || !preg_match('/^([a-zA-Z\d.-]*|\[[a-fA-F\d:]+\])$/', $host)
         ) {
             return false;
         }
         //Looks like a bracketed IPv6 address
-        if (strlen((string) $host) > 2 && substr((string) $host, 0, 1) === '[' && substr((string) $host, -1, 1) === ']') {
-            return filter_var(substr((string) $host, 1, -1), FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) !== false;
+        if (strlen($host) > 2 && substr($host, 0, 1) === '[' && substr($host, -1, 1) === ']') {
+            return filter_var(substr($host, 1, -1), FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) !== false;
         }
         //If removing all the dots results in a numeric string, it must be an IPv4 address.
         //Need to check this first because otherwise things like `999.0.0.0` are considered valid host names
@@ -4176,6 +4337,7 @@ class PHPMailer
      * @param string      $name  Custom header name
      * @param string|null $value Header value
      *
+     * @return bool True if a header was set successfully
      * @throws Exception
      */
     public function addCustomHeader($name, $value = null)
@@ -4184,8 +4346,8 @@ class PHPMailer
             //Value passed in as name:value
             list($name, $value) = explode(':', $name, 2);
         }
-        $name = trim((string) $name);
-        $value = (null === $value) ? '' : trim((string) $value);
+        $name = trim($name);
+        $value = (null === $value) ? '' : trim($value);
         //Ensure name is not empty, and that neither name nor value contain line breaks
         if (empty($name) || strpbrk($name . $value, "\r\n") !== false) {
             if ($this->exceptions) {
@@ -4234,7 +4396,7 @@ class PHPMailer
     {
         preg_match_all('/(?<!-)(src|background)=["\'](.*)["\']/Ui', $message, $images);
         if (array_key_exists(2, $images)) {
-            if (strlen((string) $basedir) > 1 && '/' !== substr((string) $basedir, -1)) {
+            if (strlen($basedir) > 1 && '/' !== substr($basedir, -1)) {
                 //Ensure $basedir has a trailing /
                 $basedir .= '/';
             }
@@ -4288,10 +4450,10 @@ class PHPMailer
                     }
                     //RFC2392 S 2
                     $cid = substr(hash('sha256', $url), 0, 32) . '@phpmailer.0';
-                    if (strlen((string) $basedir) > 1 && '/' !== substr((string) $basedir, -1)) {
+                    if (strlen($basedir) > 1 && '/' !== substr($basedir, -1)) {
                         $basedir .= '/';
                     }
-                    if (strlen((string) $directory) > 1 && '/' !== substr((string) $directory, -1)) {
+                    if (strlen($directory) > 1 && '/' !== substr($directory, -1)) {
                         $directory .= '/';
                     }
                     if (
@@ -4470,6 +4632,7 @@ class PHPMailer
             'ics' => 'text/calendar',
             'xml' => 'text/xml',
             'xsl' => 'text/xml',
+            'csv' => 'text/csv',
             'wmv' => 'video/x-ms-wmv',
             'mpeg' => 'video/mpeg',
             'mpe' => 'video/mpeg',
@@ -4484,7 +4647,7 @@ class PHPMailer
             'webm' => 'video/webm',
             'mkv' => 'video/x-matroska',
         ];
-        $ext = strtolower((string) $ext);
+        $ext = strtolower($ext);
         if (array_key_exists($ext, $mimes)) {
             return $mimes[$ext];
         }
@@ -4505,7 +4668,7 @@ class PHPMailer
         //In case the path is a URL, strip any query string before getting extension
         $qpos = strpos($filename, '?');
         if (false !== $qpos) {
-            $filename = substr((string) $filename, 0, $qpos);
+            $filename = substr($filename, 0, $qpos);
         }
         $ext = static::mb_pathinfo($filename, PATHINFO_EXTENSION);
 
@@ -4624,15 +4787,27 @@ class PHPMailer
     }
 
     /**
-     * Remove trailing breaks from a string.
+     * Remove trailing whitespace from a string.
+     *
+     * @param string $text
+     *
+     * @return string The text to remove whitespace from
+     */
+    public static function stripTrailingWSP($text)
+    {
+        return rtrim($text, " \r\n\t");
+    }
+
+    /**
+     * Strip trailing line breaks from a string.
      *
      * @param string $text
      *
      * @return string The text to remove breaks from
      */
-    public static function stripTrailingWSP($text)
+    public static function stripTrailingBreaks($text)
     {
-        return rtrim((string) $text, " \r\n\t");
+        return rtrim($text, "\r\n");
     }
 
     /**
@@ -4681,7 +4856,7 @@ class PHPMailer
     public function DKIM_QP($txt)
     {
         $line = '';
-        $len = strlen((string) $txt);
+        $len = strlen($txt);
         for ($i = 0; $i < $len; ++$i) {
             $ord = ord($txt[$i]);
             if (((0x21 <= $ord) && ($ord <= 0x3A)) || $ord === 0x3C || ((0x3E <= $ord) && ($ord <= 0x7E))) {
@@ -4765,14 +4940,14 @@ class PHPMailer
             }
             list($heading, $value) = explode(':', $line, 2);
             //Lower-case header name
-            $heading = strtolower((string) $heading);
+            $heading = strtolower($heading);
             //Collapse white space within the value, also convert WSP to space
             $value = preg_replace('/[ \t]+/', ' ', $value);
             //RFC6376 is slightly unclear here - it says to delete space at the *end* of each value
             //But then says to delete space before and after the colon.
             //Net result is the same as trimming both ends of the value.
             //By elimination, the same applies to the field name
-            $lines[$key] = trim((string) $heading, " \t") . ':' . trim((string) $value, " \t");
+            $lines[$key] = trim($heading, " \t") . ':' . trim($value, " \t");
         }
 
         return implode(self::CRLF, $lines);
@@ -4798,7 +4973,7 @@ class PHPMailer
         $body = static::normalizeBreaks($body, self::CRLF);
 
         //Reduce multiple trailing line breaks to a single one
-        return static::stripTrailingWSP($body) . self::CRLF;
+        return static::stripTrailingBreaks($body) . self::CRLF;
     }
 
     /**
@@ -4865,7 +5040,7 @@ class PHPMailer
         $headersToSign = [];
         foreach ($parsedHeaders as $header) {
             //Is this header one that must be included in the DKIM signature?
-            if (in_array(strtolower((string) $header['label']), $autoSignHeaders, true)) {
+            if (in_array(strtolower($header['label']), $autoSignHeaders, true)) {
                 $headersToSignKeys[] = $header['label'];
                 $headersToSign[] = $header['label'] . ': ' . $header['value'];
                 if ($this->DKIM_copyHeaderFields) {
@@ -4901,7 +5076,7 @@ class PHPMailer
                     $copiedHeaderFields .= static::$LE . ' |';
                 }
                 //Fold long values
-                if (strlen((string) $copiedHeader) > self::STD_LINE_LENGTH - 3) {
+                if (strlen($copiedHeader) > self::STD_LINE_LENGTH - 3) {
                     $copiedHeaderFields .= substr(
                         chunk_split($copiedHeader, self::STD_LINE_LENGTH - 3, static::$LE . self::FWS),
                         0,

@@ -64,7 +64,7 @@ class HTMLPurifier_AttrDef_CSS_Multiple extends HTMLPurifier_AttrDef
         if ($final === '') {
             return false;
         }
-        return rtrim((string) $final);
+        return rtrim($final);
     }
 }
 

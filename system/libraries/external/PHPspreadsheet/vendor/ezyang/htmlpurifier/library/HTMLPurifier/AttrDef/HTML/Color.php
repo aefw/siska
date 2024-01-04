@@ -19,22 +19,22 @@ class HTMLPurifier_AttrDef_HTML_Color extends HTMLPurifier_AttrDef
             $colors = $config->get('Core.ColorKeywords');
         }
 
-        $string = trim((string) $string);
+        $string = trim($string);
 
         if (empty($string)) {
             return false;
         }
-        $lower = strtolower((string) $string);
+        $lower = strtolower($string);
         if (isset($colors[$lower])) {
             return $colors[$lower];
         }
         if ($string[0] === '#') {
-            $hex = substr((string) $string, 1);
+            $hex = substr($string, 1);
         } else {
             $hex = $string;
         }
 
-        $length = strlen((string) $hex);
+        $length = strlen($hex);
         if ($length !== 3 && $length !== 6) {
             return false;
         }

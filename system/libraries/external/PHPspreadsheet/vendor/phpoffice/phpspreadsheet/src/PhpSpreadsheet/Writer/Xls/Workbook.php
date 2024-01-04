@@ -55,13 +55,13 @@ class Workbook extends BIFFwriter
     private $parser;
 
     /**
-     * The BIFF file size for the workbook.
+     * The BIFF file size for the workbook. Not currently used.
      *
      * @var int
      *
      * @see calcSheetOffsets()
      */
-    private $biffSize;
+    private $biffSize; // @phpstan-ignore-line
 
     /**
      * XF Writers.
@@ -163,6 +163,8 @@ class Workbook extends BIFFwriter
 
     /**
      * Color cache.
+     *
+     * @var array
      */
     private $colors;
 
@@ -172,6 +174,9 @@ class Workbook extends BIFFwriter
      * @var null|\PhpOffice\PhpSpreadsheet\Shared\Escher
      */
     private $escher;
+
+    /** @var mixed */
+    private static $scrutinizerFalse = false;
 
     /**
      * Class constructor.
@@ -249,7 +254,7 @@ class Workbook extends BIFFwriter
         $xfWriter->setDiagColor($this->addColor($style->getBorders()->getDiagonal()->getColor()->getRGB()));
 
         // Add the number format if it is not a built-in one and not already added
-        if ($style->getNumberFormat()->getBuiltInFormatCode() === false) {
+        if ($style->getNumberFormat()->getBuiltInFormatCode() === self::$scrutinizerFalse) {
             $numberFormatHashCode = $style->getNumberFormat()->getHashCode();
 
             if (isset($this->addedNumberFormats[$numberFormatHashCode])) {
@@ -307,9 +312,9 @@ class Workbook extends BIFFwriter
         if (!isset($this->colors[$rgb])) {
             $color =
                 [
-                    hexdec(substr((string) $rgb, 0, 2)),
-                    hexdec(substr((string) $rgb, 2, 2)),
-                    hexdec(substr((string) $rgb, 4)),
+                    hexdec(substr($rgb, 0, 2)),
+                    hexdec(substr($rgb, 2, 2)),
+                    hexdec(substr($rgb, 4)),
                     0,
                 ];
             $colorIndex = array_search($color, $this->palette);
@@ -555,7 +560,7 @@ class Workbook extends BIFFwriter
                     $worksheet = $definedName->getWorksheet() ? $definedName->getWorksheet()->getTitle() : null;
                 }
             } else {
-                $worksheet = str_replace("''", "'", trim((string) $worksheet, "'"));
+                $worksheet = str_replace("''", "'", trim($worksheet, "'"));
             }
             if (!empty($worksheet)) {
                 $newRange = "'" . str_replace("'", "''", $worksheet) . "'!";
@@ -568,7 +573,7 @@ class Workbook extends BIFFwriter
                 $newRange .= "\${$row}";
             }
 
-            $definedRange = substr((string) $definedRange, 0, $offset) . $newRange . substr((string) $definedRange, $offset + $length);
+            $definedRange = substr($definedRange, 0, $offset) . $newRange . substr($definedRange, $offset + $length);
         }
 
         return $definedRange;
@@ -578,7 +583,7 @@ class Workbook extends BIFFwriter
      * Writes all the DEFINEDNAME records (BIFF8).
      * So far this is only used for repeating rows/columns (print titles) and print areas.
      */
-    private function writeAllDefinedNamesBiff8()
+    private function writeAllDefinedNamesBiff8(): string
     {
         $chunk = '';
 
@@ -591,21 +596,18 @@ class Workbook extends BIFFwriter
 
                 // parse formula
                 try {
-                    $error = $this->parser->parse($range);
+                    $this->parser->parse($range);
                     $formulaData = $this->parser->toReversePolish();
 
                     // make sure tRef3d is of type tRef3dR (0x3A)
                     if (isset($formulaData[0]) && ($formulaData[0] == "\x7A" || $formulaData[0] == "\x5A")) {
-                        $formulaData = "\x3A" . substr((string) $formulaData, 1);
+                        $formulaData = "\x3A" . substr($formulaData, 1);
                     }
 
                     if ($definedName->getLocalOnly()) {
-                        /**
-                         * local scope.
-                         *
-                         * @phpstan-ignore-next-line
-                         */
-                        $scope = $this->spreadsheet->getIndex($definedName->getScope()) + 1;
+                        // local scope
+                        $scopeWs = $definedName->getScope();
+                        $scope = ($scopeWs === null) ? 0 : ($this->spreadsheet->getIndex($scopeWs) + 1);
                     } else {
                         // global scope
                         $scope = 0;
@@ -641,9 +643,8 @@ class Workbook extends BIFFwriter
 
                 // store the DEFINEDNAME record
                 $chunk .= $this->writeData($this->writeDefinedNameBiff8(pack('C', 0x07), $formulaData, $i + 1, true));
-
-            // (exclusive) either repeatColumns or repeatRows
             } elseif ($sheetSetup->isColumnsToRepeatAtLeftSet() || $sheetSetup->isRowsToRepeatAtTopSet()) {
+                // (exclusive) either repeatColumns or repeatRows.
                 // Columns to repeat
                 if ($sheetSetup->isColumnsToRepeatAtLeftSet()) {
                     $repeat = $sheetSetup->getColumnsToRepeatAtLeft();
@@ -744,12 +745,12 @@ class Workbook extends BIFFwriter
         $name = substr(StringHelper::UTF8toBIFF8UnicodeLong($name), 2);
 
         // size of the formula (in bytes)
-        $sz = strlen((string) $formulaData);
+        $sz = strlen($formulaData);
 
         // combine the parts
         $data = pack('vCCvvvCCCC', $options, 0, $nlen, $sz, 0, $sheetIndex, 0, 0, 0, 0)
             . $name . $formulaData;
-        $length = strlen((string) $data);
+        $length = strlen($data);
 
         $header = pack('vv', $record, $length);
 
@@ -784,12 +785,12 @@ class Workbook extends BIFFwriter
         );
 
         // size of the formula (in bytes)
-        $sz = strlen((string) $extra);
+        $sz = strlen($extra);
 
         // combine the parts
         $data = pack('vCCvvvCCCCC', $options, 0, 1, $sz, 0, $sheetIndex, 0, 0, 0, 0, 0)
             . $name . $extra;
-        $length = strlen((string) $data);
+        $length = strlen($data);
 
         $header = pack('vv', $record, $length);
 
@@ -873,12 +874,12 @@ class Workbook extends BIFFwriter
         // sheet type
         $st = 0x00;
 
-        $grbit = 0x0000; // Visibility and sheet type
+        //$grbit = 0x0000; // Visibility and sheet type
 
         $data = pack('VCC', $offset, $ss, $st);
         $data .= StringHelper::UTF8toBIFF8UnicodeShort($sheetname);
 
-        $length = strlen((string) $data);
+        $length = strlen($data);
         $header = pack('vv', $record, $length);
         $this->append($header . $data);
     }
@@ -886,7 +887,7 @@ class Workbook extends BIFFwriter
     /**
      * Write Internal SUPBOOK record.
      */
-    private function writeSupbookInternal()
+    private function writeSupbookInternal(): string
     {
         $record = 0x01AE; // Record identifier
         $length = 0x0004; // Bytes to follow
@@ -901,13 +902,13 @@ class Workbook extends BIFFwriter
      * Writes the Excel BIFF EXTERNSHEET record. These references are used by
      * formulas.
      */
-    private function writeExternalsheetBiff8()
+    private function writeExternalsheetBiff8(): string
     {
         $totalReferences = count($this->parser->references);
         $record = 0x0017; // Record identifier
         $length = 2 + 6 * $totalReferences; // Number of bytes to follow
 
-        $supbook_index = 0; // FIXME: only using internal SUPBOOK record
+        //$supbook_index = 0; // FIXME: only using internal SUPBOOK record
         $header = pack('vv', $record, $length);
         $data = pack('v', $totalReferences);
         for ($i = 0; $i < $totalReferences; ++$i) {
@@ -945,7 +946,7 @@ class Workbook extends BIFFwriter
         $record = 0x041E; // Record identifier
 
         $numberFormatString = StringHelper::UTF8toBIFF8UnicodeLong($format);
-        $length = 2 + strlen((string) $numberFormatString); // Number of bytes to follow
+        $length = 2 + strlen($numberFormatString); // Number of bytes to follow
 
         $header = pack('vv', $record, $length);
         $data = pack('v', $ifmt) . $numberFormatString;
@@ -1060,7 +1061,7 @@ class Workbook extends BIFFwriter
             $headerinfo = unpack('vlength/Cencoding', $string);
 
             // currently, this is always 1 = uncompressed
-            $encoding = $headerinfo['encoding'];
+            $encoding = $headerinfo['encoding'] ?? 1;
 
             // initialize finished writing current $string
             $finished = false;
@@ -1070,11 +1071,11 @@ class Workbook extends BIFFwriter
                 // there will be need for more than one cylcle, if string longer than one record data block, there
                 // may be need for even more cycles
 
-                if (strlen((string) $recordData) + strlen((string) $string) <= $continue_limit) {
+                if (strlen($recordData) + strlen($string) <= $continue_limit) {
                     // then we can write the string (or remainder of string) without any problems
                     $recordData .= $string;
 
-                    if (strlen((string) $recordData) + strlen((string) $string) == $continue_limit) {
+                    if (strlen($recordData) + strlen($string) == $continue_limit) {
                         // we close the record data block, and initialize a new one
                         $recordDatas[] = $recordData;
                         $recordData = '';
@@ -1087,7 +1088,7 @@ class Workbook extends BIFFwriter
                     // If the string is very long it may need to be written in more than one CONTINUE record.
 
                     // check how many bytes more there is room for in the current record
-                    $space_remaining = $continue_limit - strlen((string) $recordData);
+                    $space_remaining = $continue_limit - strlen($recordData);
 
                     // minimum space needed
                     // uncompressed: 2 byte string length length field + 1 byte option flags + 2 byte character
@@ -1100,28 +1101,27 @@ class Workbook extends BIFFwriter
                     // 2. space remaining is greater than or equal to minimum space needed
                     //        here we write as much as we can in the current block, then move to next record data block
 
-                    // 1. space remaining is less than minimum space needed
                     if ($space_remaining < $min_space_needed) {
+                        // 1. space remaining is less than minimum space needed.
                         // we close the block, store the block data
                         $recordDatas[] = $recordData;
 
                         // and start new record data block where we start writing the string
                         $recordData = '';
-
-                    // 2. space remaining is greater than or equal to minimum space needed
                     } else {
+                        // 2. space remaining is greater than or equal to minimum space needed.
                         // initialize effective remaining space, for Unicode strings this may need to be reduced by 1, see below
                         $effective_space_remaining = $space_remaining;
 
                         // for uncompressed strings, sometimes effective space remaining is reduced by 1
-                        if ($encoding == 1 && (strlen((string) $string) - $space_remaining) % 2 == 1) {
+                        if ($encoding == 1 && (strlen($string) - $space_remaining) % 2 == 1) {
                             --$effective_space_remaining;
                         }
 
                         // one block fininshed, store the block data
-                        $recordData .= substr((string) $string, 0, $effective_space_remaining);
+                        $recordData .= substr($string, 0, $effective_space_remaining);
 
-                        $string = substr((string) $string, $effective_space_remaining); // for next cycle in while loop
+                        $string = substr($string, $effective_space_remaining); // for next cycle in while loop
                         $recordDatas[] = $recordData;
 
                         // start new record data block with the repeated option flags
@@ -1133,7 +1133,7 @@ class Workbook extends BIFFwriter
 
         // Store the last record data block unless it is empty
         // if there was no need for any continue records, this will be the for SST record data block itself
-        if (strlen((string) $recordData) > 0) {
+        if (strlen($recordData) > 0) {
             $recordDatas[] = $recordData;
         }
 
@@ -1143,7 +1143,7 @@ class Workbook extends BIFFwriter
             // first block should have the SST record header, remaing should have CONTINUE header
             $record = ($i == 0) ? 0x00FC : 0x003C;
 
-            $header = pack('vv', $record, strlen((string) $recordData));
+            $header = pack('vv', $record, strlen($recordData));
             $data = $header . $recordData;
 
             $chunk .= $this->writeData($data);
@@ -1155,7 +1155,7 @@ class Workbook extends BIFFwriter
     /**
      * Writes the MSODRAWINGGROUP record if needed. Possibly split using CONTINUE records.
      */
-    private function writeMsoDrawingGroup()
+    private function writeMsoDrawingGroup(): string
     {
         // write the Escher stream if necessary
         if (isset($this->escher)) {
@@ -1163,7 +1163,7 @@ class Workbook extends BIFFwriter
             $data = $writer->close();
 
             $record = 0x00EB;
-            $length = strlen((string) $data);
+            $length = strlen($data);
             $header = pack('vv', $record, $length);
 
             return $this->writeData($header . $data);

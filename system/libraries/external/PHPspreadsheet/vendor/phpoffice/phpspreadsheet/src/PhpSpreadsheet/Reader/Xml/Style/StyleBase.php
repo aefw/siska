@@ -10,9 +10,9 @@ abstract class StyleBase
     {
         $returnValue = false;
 
-        $styleAttributeValue = strtolower((string) $styleAttributeValue);
+        $styleAttributeValue = strtolower($styleAttributeValue);
         foreach ($styleList as $style) {
-            if ($styleAttributeValue == strtolower((string) $style)) {
+            if ($styleAttributeValue == strtolower($style)) {
                 $styleAttributeValue = $style;
                 $returnValue = true;
 
@@ -25,8 +25,6 @@ abstract class StyleBase
 
     protected static function getAttributes(?SimpleXMLElement $simple, string $node): SimpleXMLElement
     {
-        return ($simple === null)
-            ? new SimpleXMLElement('<xml></xml>')
-            : ($simple->attributes($node) ?? new SimpleXMLElement('<xml></xml>'));
+        return ($simple === null) ? new SimpleXMLElement('<xml></xml>') : ($simple->attributes($node) ?? new SimpleXMLElement('<xml></xml>'));
     }
 }

@@ -171,7 +171,7 @@ class Color extends Supervisor
         /** @var Style */
         $parent = $this->parent;
 
-        return $parent->getStyleArray([$this->parentPropertyName => $array]);
+        return $parent->/** @scrutinizer ignore-call */ getStyleArray([$this->parentPropertyName => $array]);
     }
 
     /**
@@ -206,7 +206,7 @@ class Color extends Supervisor
         if ($colorValue === null || $colorValue === '') {
             return self::COLOR_BLACK;
         }
-        $named = ucfirst(strtolower((string) $colorValue));
+        $named = ucfirst(strtolower($colorValue));
         if (array_key_exists($named, self::NAMED_COLOR_TRANSLATIONS)) {
             return self::NAMED_COLOR_TRANSLATIONS[$named];
         }
@@ -266,7 +266,7 @@ class Color extends Supervisor
             return $this->getSharedComponent()->getRGB();
         }
 
-        return substr((string) $this->argb ?? '', 2);
+        return substr($this->argb ?? '', 2);
     }
 
     /**
@@ -293,7 +293,7 @@ class Color extends Supervisor
      */
     private static function getColourComponent($rgbValue, $offset, $hex = true)
     {
-        $colour = substr((string) $rgbValue, $offset, 2) ?: '';
+        $colour = substr($rgbValue, $offset, 2) ?: '';
         if (preg_match('/^[0-9a-f]{2}$/i', $colour) !== 1) {
             $colour = '00';
         }
@@ -312,7 +312,7 @@ class Color extends Supervisor
      */
     public static function getRed($rgbValue, $hex = true)
     {
-        return self::getColourComponent($rgbValue, strlen((string) $rgbValue) - 6, $hex);
+        return self::getColourComponent($rgbValue, strlen($rgbValue) - 6, $hex);
     }
 
     /**
@@ -326,7 +326,7 @@ class Color extends Supervisor
      */
     public static function getGreen($rgbValue, $hex = true)
     {
-        return self::getColourComponent($rgbValue, strlen((string) $rgbValue) - 4, $hex);
+        return self::getColourComponent($rgbValue, strlen($rgbValue) - 4, $hex);
     }
 
     /**
@@ -340,7 +340,7 @@ class Color extends Supervisor
      */
     public static function getBlue($rgbValue, $hex = true)
     {
-        return self::getColourComponent($rgbValue, strlen((string) $rgbValue) - 2, $hex);
+        return self::getColourComponent($rgbValue, strlen($rgbValue) - 2, $hex);
     }
 
     /**
@@ -353,7 +353,7 @@ class Color extends Supervisor
      */
     public static function changeBrightness($hexColourValue, $adjustPercentage)
     {
-        $rgba = (strlen((string) $hexColourValue) === 8);
+        $rgba = (strlen($hexColourValue) === 8);
         $adjustPercentage = max(-1.0, min(1.0, $adjustPercentage));
 
         /** @var int $red */
@@ -362,23 +362,8 @@ class Color extends Supervisor
         $green = self::getGreen($hexColourValue, false);
         /** @var int $blue */
         $blue = self::getBlue($hexColourValue, false);
-        if ($adjustPercentage > 0) {
-            $red += (255 - $red) * $adjustPercentage;
-            $green += (255 - $green) * $adjustPercentage;
-            $blue += (255 - $blue) * $adjustPercentage;
-        } else {
-            $red += $red * $adjustPercentage;
-            $green += $green * $adjustPercentage;
-            $blue += $blue * $adjustPercentage;
-        }
 
-        $rgb = strtoupper(
-            str_pad(dechex((int) $red), 2, '0', 0) .
-            str_pad(dechex((int) $green), 2, '0', 0) .
-            str_pad(dechex((int) $blue), 2, '0', 0)
-        );
-
-        return (($rgba) ? 'FF' : '') . $rgb;
+        return (($rgba) ? 'FF' : '') . RgbTint::rgbAndTintToRgb($red, $green, $blue, $adjustPercentage);
     }
 
     /**
@@ -387,8 +372,6 @@ class Color extends Supervisor
      * @param int $colorIndex Index entry point into the colour array
      * @param bool $background Flag to indicate whether default background or foreground colour
      *                                            should be returned if the indexed colour doesn't exist
-     *
-     * @return Color
      */
     public static function indexedColor($colorIndex, $background = false, ?array $palette = null): self
     {
